@@ -19,7 +19,7 @@ import {
   Target
 } from 'react-feather';
 import { useCrm } from "./CrmContext";
-import { useAuth } from '.contexts/AuthContext';
+import { useAuth } from './contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
 import DebtorOverviewCard from '../Client/DebtorOverviewCard';
