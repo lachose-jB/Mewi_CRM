@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
 import DebtorOverviewCard from '../Client/DebtorOverviewCard';
 import { Client, ClientMetrics } from '../../types';
