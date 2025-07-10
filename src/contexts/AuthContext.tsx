@@ -18,7 +18,7 @@ import {
   RefreshCw,
   Target
 } from 'react-feather';
-import { useCrm } from '../../contexts/CrmContext';
+import { useCrm } from "./CrmContext";
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
