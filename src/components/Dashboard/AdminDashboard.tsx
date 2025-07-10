@@ -1,17 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
 import DebtorOverviewCard from '../Client/DebtorOverviewCard';
 import { Client, ClientMetrics } from '../../types';
-import { 
-  Building, CheckCircle, Clock, CreditCard, Download, Eye, FileText, Mail, 
-  Phone, BarChart3, AlertCircle, ArrowRight, Users, Calendar, TrendingUp, 
-  RefreshCw, Target, MessageSquare 
-} from 'lucide-react';
-import { useCrm } from '../../contexts/CrmContext';
-import { useAuth } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
-import ClientDossierDetails from '../Management/ClientDossierDetails';
-import { Debtor } from '../../types';
 
 const ClientDashboard: React.FC = () => {
   const { clients, debtors, invoices, communications, refreshData, clientMetrics } = useCrm();
@@ -19,47 +7,32 @@ const ClientDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [clientData, setClientData] = useState<Client | null>(null);
   const [clientStats, setClientStats] = useState<ClientMetrics | null>(null);
-  const [selectedDebtor, setSelectedDebtor] = useState<Debtor | null>(null);
 
-  // Derived data
-  const clientDebtors = clientData 
-    ? debtors.filter(d => d.clientId === clientData.id)
-    : [];
-
-  const activeDebtorCount = clientStats?.activeDebtors ?? clientDebtors.filter(d => d.status !== 'completed').length;
-  const criticalCases = clientStats?.criticalCases ?? clientDebtors.filter(d => d.status === 'critical').length;
-
-  // Load client data
+  // Get client data and stats
   useEffect(() => {
     const loadClientData = async () => {
       if (user && user.role === 'client') {
         const client = clients.find(c => c.userId === user.id);
         if (client) {
           setClientData(client);
+          
+          // Get client metrics
           const metrics = clientMetrics[client.id];
           if (metrics) {
             setClientStats(metrics);
           }
         }
       }
-    };
+    }
+    
     loadClientData();
   }, [user, clients, clientMetrics]);
 
+  // Handle refresh
   const handleRefresh = async () => {
     setIsLoading(true);
     await refreshData();
     setIsLoading(false);
-  };
-
-  // Handler pour voir le dossier d'un débiteur
-  const handleViewDebtor = (debtor: Debtor) => {
-    setSelectedDebtor(debtor);
-  };
-
-  // Handler pour revenir à la liste
-  const handleBackToList = () => {
-    setSelectedDebtor(null);
   };
 
   if (!clientData) {
@@ -74,14 +47,11 @@ const ClientDashboard: React.FC = () => {
     );
   }
 
-  // Affichage du dossier débiteur si sélectionné
-  if (selectedDebtor) {
-    return (
-      <ClientDossierDetails dossier={selectedDebtor} onBack={handleBackToList} />
-    );
-  }
-
-  return (
+import { Link } from 'react-router-dom';
+import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
+import DebtorOverviewCard from '../Client/DebtorOverviewCard';
+import { Client, ClientMetrics } from '../../types';
+  const activeDebtorCount = clientStats?.activeDebtors || clientDebtors.filter(d => 
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -247,16 +217,7 @@ const ClientDashboard: React.FC = () => {
               .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
               .slice(0, 6)
               .map(debtor => (
-                <div key={debtor.id} className="relative group">
-                  <DebtorOverviewCard debtor={debtor} />
-                  <button
-                    onClick={() => handleViewDebtor(debtor)}
-                    className="absolute top-2 right-2 bg-blue-600 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                    title="Voir le dossier"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </button>
-                </div>
+                <DebtorOverviewCard key={debtor.id} debtor={debtor} />
               ))}
           </div>
         )}
