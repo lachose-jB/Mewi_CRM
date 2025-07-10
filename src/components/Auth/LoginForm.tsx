@@ -26,8 +26,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBack }) => {
   const demoAccounts = [
     { role: 'Administrateur', email: 'admin@crm.com', password: '123456' },
     { role: 'Gestionnaire', email: 'gestionnaire@crm.com', password: '123456' },
-    { role: 'Client', email: 'client@entreprise.com', password: '123456' }, // Utilisateur qui confie ses débiteurs
-    { role: 'Débiteur', email: 'debiteur@example.com', password: '123456' } // Remplace l'ancien "Client"
+    { role: 'Client', email: 'client@example.com', password: '123456' }, // Utilisateur qui confie ses débiteurs
+    { role: 'Débiteur', email: 'debiteur@example.com', password: '123456' } // Débiteur
   ];
 
   return (

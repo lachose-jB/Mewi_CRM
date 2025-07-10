@@ -95,7 +95,11 @@ const AppContent: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto">
-          {renderContent()}
+          {user?.role === 'debiteur' ? (
+            <ClientDashboard />
+          ) : (
+            renderContent()
+          )}
         </main>
       </div>
     </div>
