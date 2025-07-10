@@ -35,7 +35,7 @@ const mockUsers: User[] = [
     role: 'client',
     isActive: true,
     createdAt: '2024-02-01'
-  }
+  },
   {
     id: '4',
     email: 'debiteur@example.com',
