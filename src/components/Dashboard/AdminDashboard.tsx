@@ -3,29 +3,13 @@ import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatD
 import DebtorOverviewCard from '../Client/DebtorOverviewCard';
 import { Client, ClientMetrics } from '../../types';
 import { 
-  Building,
-  CheckCircle, 
-  Clock, 
-  CreditCard, 
-  Download, 
-  Eye, 
-  FileText, 
-  Mail, 
-  Phone, 
-  BarChart3,
-  AlertCircle,
-  ArrowRight,
-  Users,
-  Calendar,
-  TrendingUp,
-  RefreshCw,
-  Target} from 'lucide-react';
+  Building, CheckCircle, Clock, CreditCard, Download, Eye, FileText, Mail, 
+  Phone, BarChart3, AlertCircle, ArrowRight, Users, Calendar, TrendingUp, 
+  RefreshCw, Target, MessageSquare 
+} from 'lucide-react';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
-import DebtorOverviewCard from '../Client/DebtorOverviewCard';
-import { Client, ClientMetrics } from '../../types';
 
 const ClientDashboard: React.FC = () => {
   const { clients, debtors, invoices, communications, refreshData, clientMetrics } = useCrm();
@@ -34,27 +18,31 @@ const ClientDashboard: React.FC = () => {
   const [clientData, setClientData] = useState<Client | null>(null);
   const [clientStats, setClientStats] = useState<ClientMetrics | null>(null);
 
-  // Get client data and stats
+  // Derived data
+  const clientDebtors = clientData 
+    ? debtors.filter(d => d.clientId === clientData.id)
+    : [];
+
+  const activeDebtorCount = clientStats?.activeDebtors ?? clientDebtors.filter(d => d.status !== 'completed').length;
+  const criticalCases = clientStats?.criticalCases ?? clientDebtors.filter(d => d.status === 'critical').length;
+
+  // Load client data
   useEffect(() => {
     const loadClientData = async () => {
       if (user && user.role === 'client') {
         const client = clients.find(c => c.userId === user.id);
         if (client) {
           setClientData(client);
-          
-          // Get client metrics
           const metrics = clientMetrics[client.id];
           if (metrics) {
             setClientStats(metrics);
           }
         }
       }
-    }
-    
+    };
     loadClientData();
   }, [user, clients, clientMetrics]);
 
-  // Handle refresh
   const handleRefresh = async () => {
     setIsLoading(true);
     await refreshData();
@@ -72,6 +60,8 @@ const ClientDashboard: React.FC = () => {
       </div>
     );
   }
+
+  // Le reste du composant reste identique à ta version corrigée
 
   const activeDebtorCount = clientStats?.activeDebtors || clientDebtors.filter(d => 
     <div className="p-6 space-y-6">
