@@ -17,6 +17,7 @@ import {
   TrendingUp,
   RefreshCw,
   Target
+} from 'react-feather';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
@@ -70,11 +71,11 @@ const ClientDashboard: React.FC = () => {
     );
   }
 
-import { Link } from 'react-router-dom';
-import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
-import DebtorOverviewCard from '../Client/DebtorOverviewCard';
-import { Client, ClientMetrics } from '../../types';
-  const activeDebtorCount = clientStats?.activeDebtors || clientDebtors.filter(d => 
+  const activeDebtorCount = clientStats?.activeDebtors || clientDebtors.filter(d => d.status !== 'closed').length;
+  const criticalCases = clientStats?.criticalCases || 0;
+  const clientDebtors = debtors.filter(d => d.clientId === clientData.id);
+
+  return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
