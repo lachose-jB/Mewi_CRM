@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
+import DebtorOverviewCard from '../Client/DebtorOverviewCard';
+import { Client, ClientMetrics } from '../../types';
 import { 
   Building,
   CheckCircle, 
@@ -70,10 +74,6 @@ const ClientDashboard: React.FC = () => {
     );
   }
 
-import { Link } from 'react-router-dom';
-import { formatCurrency, getDebtorStatusConfig, getRecoveryStatusConfig, formatDate } from '../../utils/dataUtils';
-import DebtorOverviewCard from '../Client/DebtorOverviewCard';
-import { Client, ClientMetrics } from '../../types';
   const activeDebtorCount = clientStats?.activeDebtors || clientDebtors.filter(d => 
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
