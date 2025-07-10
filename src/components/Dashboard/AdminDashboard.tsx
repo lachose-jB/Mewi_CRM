@@ -16,7 +16,7 @@ import {
   Calendar,
   TrendingUp,
   RefreshCw,
-  Target}
+  Target};
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
