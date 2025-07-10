@@ -451,3 +451,20 @@ export const formatTimeAgo = (dateString: string): string => {
     return formatDate(dateString);
   }
 };
+
+export const getStatusConfig = (type: 'debtor' | 'client' | 'recovery', status: string) => {
+  switch (type) {
+    case 'debtor':
+      return getDebtorStatusConfig(status);
+    case 'client':
+      return getClientStatusConfig(status);
+    case 'recovery':
+      return getRecoveryStatusConfig(status);
+    default:
+      return {
+        label: status,
+        color: 'bg-gray-100 text-gray-800',
+        icon: 'FileText'
+      };
+  }
+};
