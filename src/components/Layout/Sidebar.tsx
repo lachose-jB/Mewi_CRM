@@ -7,8 +7,7 @@ import {
   Phone, 
   Mail, 
   Calendar,
-  CreditCard,
-  UserCheck,
+  User,
   Database,
   Activity,
   Shield,
@@ -17,50 +16,46 @@ import {
   History,
   ChevronRight,
   ChevronLeft,
-  User
+  CreditCard,
+  LogOut
 } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import AccountSettings from '../Management/AccountSettings';
-import UserAccountSettings from '../Management/UserAccountSettings';
-import ManagerAccountSettings from '../Management/ManagerAccountSettings';
 
-interface SidebarProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
-  const { user } = useAuth();
+const Sidebar: React.FC = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
 
   const getMenuItems = () => {
-    switch (user?.role) {
+    if (!user) return [];
+
+    switch (user.role) {
       case 'admin':
         return [
-          { id: 'dashboard', label: 'Tableau de Bord', icon: BarChart3 },
-          { id: 'users', label: 'Gestion Utilisateurs', icon: Users },
-          { id: 'clients', label: 'Gestion débiteur', icon: FileText },
-          { id: 'config', label: 'Configuration', icon: Settings },
-          { id: 'reports', label: 'Rapports & Analyses', icon: Database },
-          { id: 'monitoring', label: 'Monitoring Système', icon: Activity },
-          { id: 'backup', label: 'Sauvegarde', icon: HardDrive }
+          { id: 'admin/dashboard', label: 'Tableau de Bord', icon: BarChart3 },
+          { id: 'admin/users', label: 'Gestion Utilisateurs', icon: Users },
+          { id: 'admin/clients', label: 'Gestion Clients', icon: FileText },
+          { id: 'admin/config', label: 'Configuration', icon: Settings },
+          { id: 'admin/reports', label: 'Rapports & Analyses', icon: Database },
+          { id: 'admin/monitoring', label: 'Monitoring Système', icon: Activity },
+          { id: 'admin/backup', label: 'Sauvegarde', icon: HardDrive }
         ];
       case 'manager':
         return [
-          { id: 'dashboard', label: 'Tableau de Bord', icon: BarChart3 },
-          { id: 'portfolio', label: 'Portefeuille', icon: FileText },
-          { id: 'communications', label: 'Communications', icon: Mail },
-          { id: 'calendar', label: 'Agenda', icon: Calendar },
-          { id: 'calls', label: 'Appels', icon: Phone }
+          { id: 'manager/dashboard', label: 'Tableau de Bord', icon: BarChart3 },
+          { id: 'manager/debtors', label: 'Débiteurs', icon: FileText },
+          { id: 'manager/communications', label: 'Communications', icon: Mail },
+          { id: 'manager/calendar', label: 'Agenda', icon: Calendar },
+          { id: 'manager/calls', label: 'Appels', icon: Phone }
         ];
       case 'client':
         return [
-          { id: 'dashboard', label: 'Vue d\'ensemble', icon: UserCheck },
-          { id: 'dossier', label: 'Mon Dossier Détaillé', icon: Eye },
-          { id: 'invoices', label: 'Mes Factures', icon: FileText },
-          { id: 'payments', label: 'Paiements', icon: CreditCard },
-          { id: 'history', label: 'Historique Complet', icon: History }
+          { id: 'client/dashboard', label: 'Tableau de Bord', icon: BarChart3 },
+          { id: 'debtors', label: 'Mes Débiteurs', icon: Users },
+          { id: 'invoices', label: 'Factures', icon: FileText },
+          { id: 'history', label: 'Historique', icon: History }
         ];
       default:
         return [];
@@ -69,99 +64,89 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
 
   const menuItems = getMenuItems();
 
-  const handleOpenSettings = () => {
-    setShowSettings(true);
+  const handleNavigation = (path: string) => {
+    navigate(`/${path}`);
   };
 
-  const renderSettingsModal = () => {
-    if (!showSettings) return null;
-
-    switch (user?.role) {
-      case 'admin':
-        return (
-          <AccountSettings
-            isOpen={showSettings}
-            onClose={() => setShowSettings(false)}
-          />
-        );
-      case 'manager':
-        return (
-          <ManagerAccountSettings
-            isOpen={showSettings}
-            onClose={() => setShowSettings(false)}
-          />
-        );
-      case 'client':
-        return (
-          <UserAccountSettings
-            isOpen={showSettings}
-            onClose={() => setShowSettings(false)}
-          />
-        );
-      default:
-        return null;
-    }
+  const isActive = (path: string) => {
+    return location.pathname === `/${path}`;
   };
 
   return (
-    <>
-      <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-gray-50 border-r border-gray-200 h-screen transition-all duration-300`}>
-        <div className="flex flex-col h-full">
-          <div className="p-4 flex items-center justify-between border-b border-gray-200">
+    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200 h-screen transition-all duration-300 flex flex-col`}>
+      <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200">
+        <div className={`flex items-center ${collapsed ? 'justify-center w-full' : ''}`}>
+          <div className="bg-blue-600 text-white p-2 rounded">
+            <BarChart3 className="h-6 w-6" />
+          </div>
+          {!collapsed && (
+            <div className="ml-3">
+              <h2 className="text-lg font-bold text-gray-900">MEWI</h2>
+              <p className="text-xs text-gray-500">Recouvrement</p>
+            </div>
+          )}
+        </div>
+        
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className={`p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg ${collapsed ? '' : ''}`}
+        >
+          {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+        </button>
+      </div>
+      
+      <nav className="mt-5 px-2 flex-1 overflow-y-auto">
+        <div className="space-y-1">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.id);
+            
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavigation(item.id)}
+                className={`w-full flex items-center ${collapsed ? 'justify-center' : 'justify-start'} px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                  active
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <Icon className={`${collapsed ? 'mx-auto' : 'mr-3'} h-5 w-5 ${active ? 'text-blue-600' : 'text-gray-400'}`} />
+                {!collapsed && <span>{item.label}</span>}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+      
+      <div className="px-2 pb-5 mt-auto">
+        <div className="border-t border-gray-200 pt-5 mt-5">
+          <div className={`flex items-center ${collapsed ? 'justify-center' : 'px-3'} mb-3`}>
             {!collapsed && (
-              <h2 className="text-lg font-semibold text-gray-900">MEWI Recouvrement</h2>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              </div>
             )}
             <button
-              onClick={() => setCollapsed(!collapsed)}
-              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
+              onClick={() => navigate('/profile')}
+              className={`${collapsed ? '' : 'ml-1'} p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors`}
+              title="Profil"
             >
-              {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+              <User className="h-5 w-5" />
             </button>
           </div>
           
-          <nav className="mt-6 flex-1 overflow-y-auto">
-            <div className="px-4">
-              <ul className="space-y-2">
-                {menuItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeTab === item.id;
-                  
-                  return (
-                    <li key={item.id}>
-                      <button
-                        onClick={() => onTabChange(item.id)}
-                        className={`w-full flex items-center ${collapsed ? 'justify-center' : 'px-4'} py-3 text-sm font-medium rounded-lg transition-colors ${
-                          isActive
-                            ? 'bg-blue-100 text-blue-700 border-r-2 border-blue-700'
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                        }`}
-                        title={collapsed ? item.label : undefined}
-                      >
-                        <Icon className={`${collapsed ? 'mx-auto' : 'mr-3'} h-5 w-5 ${isActive ? 'text-blue-700' : 'text-gray-400'}`} />
-                        {!collapsed && item.label}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </nav>
-          
-          <div className="p-4 border-t border-gray-200">
-            <button
-              onClick={handleOpenSettings}
-              className={`w-full flex items-center ${collapsed ? 'justify-center' : 'px-4'} py-3 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900`}
-              title={collapsed ? "Paramètres du compte" : undefined}
-            >
-              <User className={`${collapsed ? 'mx-auto' : 'mr-3'} h-5 w-5 text-gray-400`} />
-              {!collapsed && "Mon compte"}
-            </button>
-          </div>
+          <button
+            onClick={logout}
+            className={`w-full flex items-center ${collapsed ? 'justify-center' : ''} px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors`}
+          >
+            <LogOut className={`${collapsed ? 'mx-auto' : 'mr-3'} h-5 w-5`} />
+            {!collapsed && <span>Déconnexion</span>}
+          </button>
         </div>
-      </aside>
-      
-      {renderSettingsModal()}
-    </>
+      </div>
+    </aside>
   );
 };
 
