@@ -5,10 +5,12 @@ import {
   Clock, 
   CheckCircle, 
   CreditCard,
-  Calendar
+  Calendar,
+  User,
+  Building
 } from 'lucide-react';
 import { Debtor } from '../../types';
-import { formatCurrency, getRecoveryStatusConfig, getDebtorStatusConfig } from '../../utils/dataUtils';
+import { formatCurrency, getRecoveryStatusConfig, getDebtorStatusConfig, formatDate } from '../../utils/dataUtils';
 import { Link } from 'react-router-dom';
 
 interface DebtorOverviewCardProps {
@@ -23,25 +25,13 @@ const DebtorOverviewCard: React.FC<DebtorOverviewCardProps> = ({ debtor, showDet
     ? (debtor.paidAmount / debtor.originalAmount) * 100 
     : 0;
 
-  const StatusIcon = ({ status }: { status: string }) => {
-    switch(status) {
-      case 'critical':
-      case 'litigation':
-        return <AlertCircle className="h-5 w-5 text-red-600" />;
-      case 'yellow':
-      case 'orange':
-      case 'inProgress':
-      case 'disputed':
-        return <Clock className="h-5 w-5 text-orange-600" />;
-      case 'blue':
-      case 'new':
-      case 'paymentPlan':
-        return <CreditCard className="h-5 w-5 text-blue-600" />;
-      case 'recovered':
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
-      default:
-        return <Clock className="h-5 w-5 text-gray-600" />;
-    }
+  // Determine icon based on recovery status
+  const getStatusIcon = () => {
+    if (debtor.recoveryStatus === 'critical') return <AlertCircle className="h-5 w-5 text-red-600" />;
+    if (debtor.recoveryStatus === 'orange') return <Clock className="h-5 w-5 text-orange-600" />;
+    if (debtor.recoveryStatus === 'yellow') return <Clock className="h-5 w-5 text-yellow-600" />;
+    if (debtor.status === 'recovered') return <CheckCircle className="h-5 w-5 text-green-600" />;
+    return <CreditCard className="h-5 w-5 text-blue-600" />;
   };
 
   return (
@@ -56,7 +46,19 @@ const DebtorOverviewCard: React.FC<DebtorOverviewCardProps> = ({ debtor, showDet
             debtor.recoveryStatus === 'orange' ? 'bg-orange-100' :
             debtor.recoveryStatus === 'yellow' ? 'bg-yellow-100' : 'bg-blue-100'
           }`}>
-            <StatusIcon status={debtor.recoveryStatus} />
+            {debtor.type === 'company' ? (
+              <Building className={`h-5 w-5 ${
+                debtor.recoveryStatus === 'critical' ? 'text-red-600' :
+                debtor.recoveryStatus === 'orange' ? 'text-orange-600' :
+                debtor.recoveryStatus === 'yellow' ? 'text-yellow-600' : 'text-blue-600'
+              }`} />
+            ) : (
+              <User className={`h-5 w-5 ${
+                debtor.recoveryStatus === 'critical' ? 'text-red-600' :
+                debtor.recoveryStatus === 'orange' ? 'text-orange-600' :
+                debtor.recoveryStatus === 'yellow' ? 'text-yellow-600' : 'text-blue-600'
+              }`} />
+            )}
           </div>
           
           <div>
@@ -105,7 +107,7 @@ const DebtorOverviewCard: React.FC<DebtorOverviewCardProps> = ({ debtor, showDet
           <div>
             <span className="text-gray-500">Dernier contact:</span>
             <span className="ml-2 font-medium text-gray-900">
-              {debtor.lastContact ? new Date(debtor.lastContact).toLocaleDateString('fr-FR') : 'N/A'}
+              {debtor.lastContact ? formatDate(debtor.lastContact) : 'N/A'}
             </span>
           </div>
           

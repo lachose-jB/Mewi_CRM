@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 import {
-  Users,
-  FileText,
-  TrendingUp,
   AlertCircle,
-  DollarSign,
-  Calendar,
+  AlertTriangle,
   BarChart3,
-  PieChart,
-  Activity,
-  Target,
+  Calendar,
+  CheckCircle,
   Clock,
-  Phone,
+  DollarSign,
+  Download,
+  Eye,
+  FileText,
   Mail,
   MessageSquare,
-  Eye,
-  Settings,
+  Phone,
   Plus,
-  RefreshCw
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users
 } from 'lucide-react';
 import { useCrm } from '../../contexts/CrmContext';
-import ClientDossiers from '../Management/ClientDossiers';
-import ClientDossierDetails from '../Management/ClientDossierDetails';
-import RuleFormModal from '../Management/RuleFormModal';
-import SystemSettings from '../Management/SystemSettings';
+import { useNavigate } from 'react-router-dom';
+import { formatCurrency } from '../../utils/dataUtils';
 
-// Composant graphique en barres simple
+// Simple bar chart component
 const BarChart: React.FC<{ data: Array<{ label: string; value: number; color: string }> }> = ({ data }) => {
   const maxValue = Math.max(...data.map(d => d.value));
   
@@ -48,7 +48,7 @@ const BarChart: React.FC<{ data: Array<{ label: string; value: number; color: st
   );
 };
 
-// Composant graphique en secteurs (donut)
+// Simple donut chart component
 const DonutChart: React.FC<{ data: Array<{ label: string; value: number; color: string }> }> = ({ data }) => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
   let cumulativePercentage = 0;
@@ -130,7 +130,7 @@ const DonutChart: React.FC<{ data: Array<{ label: string; value: number; color: 
   );
 };
 
-// Composant graphique linéaire simple
+// Simple line chart component
 const LineChart: React.FC<{ data: Array<{ label: string; value: number }> }> = ({ data }) => {
   const maxValue = Math.max(...data.map(d => d.value));
   const minValue = Math.min(...data.map(d => d.value));
@@ -152,12 +152,12 @@ const LineChart: React.FC<{ data: Array<{ label: string; value: number }> }> = (
           </linearGradient>
         </defs>
         
-        {/* Grille */}
+        {/* Grid lines */}
         {[0, 1, 2, 3, 4].map(i => (
           <line key={i} x1="0" y1={20 + i * 20} x2="300" y2={20 + i * 20} stroke="#E5E7EB" strokeWidth="1"/>
         ))}
         
-        {/* Ligne de données */}
+        {/* Data line */}
         <polyline
           points={points}
           fill="none"
@@ -167,13 +167,13 @@ const LineChart: React.FC<{ data: Array<{ label: string; value: number }> }> = (
           strokeLinejoin="round"
         />
         
-        {/* Zone sous la courbe */}
+        {/* Area under the curve */}
         <polygon
           points={`0,100 ${points} 300,100`}
           fill="url(#gradient)"
         />
         
-        {/* Points de données */}
+        {/* Data points */}
         {data.map((item, index) => {
           const x = (index / (data.length - 1)) * 300;
           const y = 100 - ((item.value - minValue) / range) * 80;
@@ -200,31 +200,31 @@ const LineChart: React.FC<{ data: Array<{ label: string; value: number }> }> = (
 };
 
 const AdminDashboard: React.FC = () => {
-  const { metrics, clients } = useCrm();
-  const [showDossiers, setShowDossiers] = useState(false);
-  const [selectedDossier, setSelectedDossier] = useState<any | null>(null);
-  const [showRuleModal, setShowRuleModal] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showScheduling, setShowScheduling] = useState(false);
-  const [showAnalytics, setShowAnalytics] = useState(false);
+  const { systemMetrics, clients, debtors, refreshData } = useCrm();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeView, setActiveView] = useState<'dashboard' | 'analytics' | 'scheduling'>('dashboard');
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount);
+  // Handle refresh
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    await refreshData();
+    setIsLoading(false);
   };
 
-  const statusCounts = clients.reduce((acc, client) => {
-    acc[client.status] = (acc[client.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  // Calculate recovery status counts
+  const recoveryStatusCounts = {
+    blue: debtors.filter(d => d.recoveryStatus === 'blue').length,
+    yellow: debtors.filter(d => d.recoveryStatus === 'yellow').length,
+    orange: debtors.filter(d => d.recoveryStatus === 'orange').length,
+    critical: debtors.filter(d => d.recoveryStatus === 'critical').length
+  };
 
-  // Données pour les graphiques
+  // Mock data for charts
   const statusChartData = [
-    { label: 'REC 1', value: statusCounts.yellow || 0, color: 'bg-blue-500' },
-    { label: 'REC 2', value: statusCounts.orange || 0, color: 'bg-yellow-500' },
-    { label: 'REC 3', value: statusCounts.critical || 0, color: 'bg-red-500' }
+    { label: 'Relance 1', value: recoveryStatusCounts.yellow, color: 'bg-blue-500' },
+    { label: 'Relance 2', value: recoveryStatusCounts.orange, color: 'bg-yellow-500' },
+    { label: 'Relance 3', value: recoveryStatusCounts.critical, color: 'bg-red-500' }
   ];
 
   const monthlyRecoveryData = [
@@ -243,10 +243,11 @@ const AdminDashboard: React.FC = () => {
     { label: 'Jean R.', value: 68, color: 'bg-orange-500' }
   ];
 
+  // Stats cards data
   const statCards = [
     {
       title: 'Créances Totales',
-      value: formatCurrency(metrics?.totalDebt ?? 0),
+      value: formatCurrency(systemMetrics?.totalDebt ?? 0),
       icon: DollarSign,
       color: 'bg-blue-500',
       textColor: 'text-blue-600',
@@ -256,7 +257,7 @@ const AdminDashboard: React.FC = () => {
     },
     {
       title: 'Dossiers Actifs',
-      value: (metrics?.activeFiles ?? 0).toLocaleString(),
+      value: (systemMetrics?.activeFiles ?? 0).toLocaleString(),
       icon: FileText,
       color: 'bg-green-500',
       textColor: 'text-green-600',
@@ -266,7 +267,7 @@ const AdminDashboard: React.FC = () => {
     },
     {
       title: 'Taux de Recouvrement',
-      value: `${metrics?.recoveryRate ?? 0}%`,
+      value: `${systemMetrics?.recoveryRate ?? 0}%`,
       icon: TrendingUp,
       color: 'bg-purple-500',
       textColor: 'text-purple-600',
@@ -276,7 +277,7 @@ const AdminDashboard: React.FC = () => {
     },
     {
       title: 'DSO Moyen',
-      value: `${metrics?.averageDso ?? 0} jours`,
+      value: `${systemMetrics?.averageDso ?? 0} jours`,
       icon: Calendar,
       color: 'bg-orange-500',
       textColor: 'text-orange-600',
@@ -286,81 +287,107 @@ const AdminDashboard: React.FC = () => {
     }
   ];
 
-  // Gestion des actions des boutons
-  // Affiche la liste des dossiers
-  const handleViewDossiers = () => {
-    setShowDossiers(true);
-    setSelectedDossier(null);
-  };
-
-  // Quand on clique sur un dossier dans la liste
-  const handleSelectDossier = (dossier: any) => {
-    setSelectedDossier(dossier);
-  };
-
-  // Retour à la liste des dossiers
-  const handleBackToDossiers = () => {
-    setSelectedDossier(null);
-  };
-
-  const handleScheduling = () => {
-    setShowScheduling(true);
-  };
-
-  const handleAnalyze = () => {
-    setShowAnalytics(true);
-  };
-
-  const handleAddRule = () => {
-    setShowRuleModal(true);
-  };
-
-  const handleSaveRule = (rule: any) => {
-    console.log('Nouvelle règle sauvegardée:', rule);
-    // Ici vous pourriez ajouter la logique pour sauvegarder la règle
-  };
-
-  // Si un dossier est sélectionné, afficher ses détails
-  if (selectedDossier) {
+  // If showing analytics view
+  if (activeView === 'analytics') {
     return (
-      <div>
-        <div className="p-6 border-b border-gray-200">
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-between">
           <button
-            onClick={handleBackToDossiers}
-            className="flex items-center text-blue-600 hover:text-blue-700 mb-4"
-          >
-            ← Retour à la liste des dossiers
-          </button>
-        </div>
-        <ClientDossierDetails dossier={selectedDossier} onBack={handleBackToDossiers} />
-      </div>
-    );
-  }
-
-  // Si on affiche les dossiers, on retourne le composant ClientDossiers
-  if (showDossiers) {
-    return (
-      <div>
-        <div className="p-6 border-b border-gray-200">
-          <button
-            onClick={() => setShowDossiers(false)}
-            className="flex items-center text-blue-600 hover:text-blue-700 mb-4"
+            onClick={() => setActiveView('dashboard')}
+            className="flex items-center text-blue-600 hover:text-blue-700"
           >
             ← Retour au tableau de bord
           </button>
+          <h1 className="text-2xl font-bold text-gray-900">Analyses Avancées</h1>
+          <div></div>
         </div>
-        <ClientDossiers onSelectDossier={handleSelectDossier} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recovery trends */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tendances de Recouvrement</h3>
+            <LineChart data={monthlyRecoveryData} />
+          </div>
+
+          {/* Manager performance */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance par Gestionnaire</h3>
+            <BarChart data={performanceByManagerData} />
+          </div>
+
+          {/* AI predictions */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Prédictions IA</h3>
+            <div className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-center">
+                  <TrendingUp className="h-5 w-5 text-green-600 mr-3" />
+                  <div>
+                    <p className="font-medium text-green-900">Prédiction positive</p>
+                    <p className="text-sm text-green-700">+15% de recouvrement prévu ce mois</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="flex items-center">
+                  <AlertCircle className="h-5 w-5 text-yellow-600 mr-3" />
+                  <div>
+                    <p className="font-medium text-yellow-900">Attention requise</p>
+                    <p className="text-sm text-yellow-700">23 dossiers à risque d'impayé</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recommendations */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recommandations</h3>
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <div className="bg-blue-100 p-1 rounded mr-3 mt-1">
+                  <Target className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Optimiser les relances SMS</p>
+                  <p className="text-xs text-gray-600">Taux de réponse 34% supérieur aux emails</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-purple-100 p-1 rounded mr-3 mt-1">
+                  <Clock className="h-4 w-4 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Ajuster les horaires d'appel</p>
+                  <p className="text-xs text-gray-600">Meilleur taux de contact entre 14h-16h</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-green-100 p-1 rounded mr-3 mt-1">
+                  <Users className="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Former l'équipe</p>
+                  <p className="text-xs text-gray-600">Nouvelles techniques de négociation disponibles</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
-  // Modal de planification
-  if (showScheduling) {
+  // If showing scheduling view
+  if (activeView === 'scheduling') {
     return (
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={() => setShowScheduling(false)}
+            onClick={() => setActiveView('dashboard')}
             className="flex items-center text-blue-600 hover:text-blue-700"
           >
             ← Retour au tableau de bord
@@ -370,12 +397,11 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Relances programmées */}
+          {/* Scheduled reminders */}
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Relances Programmées</h3>
               <button
-                onClick={handleAddRule}
                 className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -409,7 +435,7 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Calendrier des actions */}
+          {/* Calendar */}
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Calendrier des Actions</h3>
             <div className="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
@@ -421,7 +447,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Statistiques de planification */}
+        {/* Scheduling stats */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
@@ -475,108 +501,25 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
-  // Modal d'analyse
-  if (showAnalytics) {
-    return (
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={() => setShowAnalytics(false)}
-            className="flex items-center text-blue-600 hover:text-blue-700"
-          >
-            ← Retour au tableau de bord
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900">Analyses Avancées</h1>
-          <div></div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Analyse des tendances */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tendances de Recouvrement</h3>
-            <LineChart data={monthlyRecoveryData} />
-          </div>
-
-          {/* Performance par gestionnaire */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance par Gestionnaire</h3>
-            <BarChart data={performanceByManagerData} />
-          </div>
-
-          {/* Prédictions IA */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Prédictions IA</h3>
-            <div className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <TrendingUp className="h-5 w-5 text-green-600 mr-3" />
-                  <div>
-                    <p className="font-medium text-green-900">Prédiction positive</p>
-                    <p className="text-sm text-green-700">+15% de recouvrement prévu ce mois</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 mr-3" />
-                  <div>
-                    <p className="font-medium text-yellow-900">Attention requise</p>
-                    <p className="text-sm text-yellow-700">23 dossiers à risque d'impayé</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Recommandations */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recommandations</h3>
-            <div className="space-y-3">
-              <div className="flex items-start">
-                <div className="bg-blue-100 p-1 rounded mr-3 mt-1">
-                  <Target className="h-4 w-4 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Optimiser les relances SMS</p>
-                  <p className="text-xs text-gray-600">Taux de réponse 34% supérieur aux emails</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="bg-purple-100 p-1 rounded mr-3 mt-1">
-                  <Clock className="h-4 w-4 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Ajuster les horaires d'appel</p>
-                  <p className="text-xs text-gray-600">Meilleur taux de contact entre 14h-16h</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="bg-green-100 p-1 rounded mr-3 mt-1">
-                  <Users className="h-4 w-4 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Former l'équipe</p>
-                  <p className="text-xs text-gray-600">Nouvelles techniques de négociation disponibles</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // Main dashboard view
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Tableau de Bord Administrateur</h1>
-        <p className="text-gray-600">Vue d'ensemble de l'activité de recouvrement</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Tableau de Bord Administrateur</h1>
+          <p className="text-gray-600">Vue d'ensemble de l'activité de recouvrement</p>
+        </div>
+        <button 
+          onClick={handleRefresh}
+          disabled={isLoading}
+          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          {isLoading ? 'Actualisation...' : 'Actualiser'}
+        </button>
       </div>
 
-      {/* Statistiques principales avec tendances */}
+      {/* Main stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
@@ -608,7 +551,7 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Répartition par statut - Graphique en secteurs */}
+        {/* Debtor status distribution */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Répartition des Dossiers</h3>
@@ -617,7 +560,7 @@ const AdminDashboard: React.FC = () => {
           <DonutChart data={statusChartData} />
         </div>
 
-        {/* Performance par gestionnaire - Graphique en barres */}
+        {/* Manager performance */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Performance Gestionnaires</h3>
@@ -631,7 +574,7 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Évolution mensuelle - Graphique linéaire */}
+        {/* Monthly recovery evolution */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Évolution du Recouvrement</h3>
@@ -645,7 +588,7 @@ const AdminDashboard: React.FC = () => {
           <LineChart data={monthlyRecoveryData} />
         </div>
 
-        {/* Statistiques de communication */}
+        {/* Communication stats */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Communications ce Mois</h3>
@@ -676,9 +619,9 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Activité récente et alertes */}
+      {/* Recent activity and alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Activité récente */}
+        {/* Recent activity */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Activité Récente</h3>
@@ -696,7 +639,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
               <span className="text-sm font-medium text-green-600">
-                {formatCurrency(metrics?.monthlyRecovered ?? 0)}
+                {formatCurrency(systemMetrics?.monthlyRecovered ?? 0)}
               </span>
             </div>
             
@@ -706,11 +649,11 @@ const AdminDashboard: React.FC = () => {
                   <Users className="h-4 w-4 text-blue-600" />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-900">Nouveaux Débiteur</p>
+                  <p className="text-sm font-medium text-gray-900">Nouveaux Clients</p>
                   <p className="text-xs text-gray-500">Cette semaine</p>
                 </div>
               </div>
-              <span className="text-sm font-medium text-blue-600">12</span>
+              <span className="text-sm font-medium text-blue-600">3</span>
             </div>
             
             <div className="flex items-center justify-between py-3">
@@ -733,18 +676,18 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Alertes système */}
+        {/* System alerts */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Alertes Système</h3>
           <div className="space-y-3">
             <div className="flex items-start p-4 bg-red-50 border border-red-200 rounded-lg">
               <AlertCircle className="h-5 w-5 text-red-500 mr-3 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-red-800">23 dossiers en statut critique</p>
+                <p className="text-sm font-medium text-red-800">{recoveryStatusCounts.critical} dossiers en statut critique</p>
                 <p className="text-xs text-red-600 mt-1">Intervention urgente requise</p>
                 <div className="mt-2">
                   <button 
-                    onClick={handleViewDossiers}
+                    onClick={() => navigate('/admin/clients')}
                     className="text-xs bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors"
                   >
                     Voir les dossiers
@@ -760,7 +703,7 @@ const AdminDashboard: React.FC = () => {
                 <p className="text-xs text-yellow-600 mt-1">Pour les prochaines 24h</p>
                 <div className="mt-2">
                   <button 
-                    onClick={handleScheduling}
+                    onClick={() => setActiveView('scheduling')}
                     className="text-xs bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700 transition-colors"
                   >
                     Planification
@@ -776,7 +719,7 @@ const AdminDashboard: React.FC = () => {
                 <p className="text-xs text-blue-600 mt-1">+45% de relances aujourd'hui</p>
                 <div className="mt-2">
                   <button 
-                    onClick={handleAnalyze}
+                    onClick={() => setActiveView('analytics')}
                     className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
                   >
                     Analyser
@@ -788,12 +731,12 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Actions rapides */}
+      {/* Quick actions */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions Rapides</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <button 
-            onClick={handleAddRule}
+            onClick={() => navigate('/admin/config')}
             className="flex items-center justify-center p-4 border-2 border-dashed border-blue-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors"
           >
             <div className="text-center">
@@ -803,7 +746,7 @@ const AdminDashboard: React.FC = () => {
           </button>
           
           <button 
-            onClick={() => setShowSettings(true)}
+            onClick={() => navigate('/admin/config')}
             className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors"
           >
             <div className="text-center">
@@ -813,17 +756,17 @@ const AdminDashboard: React.FC = () => {
           </button>
           
           <button 
-            onClick={handleViewDossiers}
+            onClick={() => navigate('/admin/clients')}
             className="flex items-center justify-center p-4 border-2 border-dashed border-green-300 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors"
           >
             <div className="text-center">
               <Eye className="h-8 w-8 text-green-500 mx-auto mb-2" />
-              <p className="text-sm font-medium text-green-600">Voir Dossiers</p>
+              <p className="text-sm font-medium text-green-600">Voir Clients</p>
             </div>
           </button>
           
           <button 
-            onClick={handleScheduling}
+            onClick={() => setActiveView('scheduling')}
             className="flex items-center justify-center p-4 border-2 border-dashed border-orange-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 transition-colors"
           >
             <div className="text-center">
@@ -833,20 +776,6 @@ const AdminDashboard: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {/* Modals */}
-      {showRuleModal && (
-        <RuleFormModal 
-          rule={null}
-          isOpen={showRuleModal}
-          onClose={() => setShowRuleModal(false)} 
-          onSave={handleSaveRule}
-        />
-      )}
-      
-      {showSettings && (
-        <SystemSettings onClose={() => setShowSettings(false)} isOpen={false} />
-      )}
     </div>
   );
 };
