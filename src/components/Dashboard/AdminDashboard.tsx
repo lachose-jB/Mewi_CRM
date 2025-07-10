@@ -10,6 +10,8 @@ import {
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import ClientDossierDetails from '../Management/ClientDossierDetails';
+import { Debtor } from '../../types';
 
 const ClientDashboard: React.FC = () => {
   const { clients, debtors, invoices, communications, refreshData, clientMetrics } = useCrm();
@@ -17,6 +19,7 @@ const ClientDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [clientData, setClientData] = useState<Client | null>(null);
   const [clientStats, setClientStats] = useState<ClientMetrics | null>(null);
+  const [selectedDebtor, setSelectedDebtor] = useState<Debtor | null>(null);
 
   // Derived data
   const clientDebtors = clientData 
@@ -49,6 +52,16 @@ const ClientDashboard: React.FC = () => {
     setIsLoading(false);
   };
 
+  // Handler pour voir le dossier d'un débiteur
+  const handleViewDebtor = (debtor: Debtor) => {
+    setSelectedDebtor(debtor);
+  };
+
+  // Handler pour revenir à la liste
+  const handleBackToList = () => {
+    setSelectedDebtor(null);
+  };
+
   if (!clientData) {
     return (
       <div className="p-6 flex items-center justify-center h-full">
@@ -61,7 +74,14 @@ const ClientDashboard: React.FC = () => {
     );
   }
 
-  // Le reste du composant reste identique à ta version corrigée 
+  // Affichage du dossier débiteur si sélectionné
+  if (selectedDebtor) {
+    return (
+      <ClientDossierDetails dossier={selectedDebtor} onBack={handleBackToList} />
+    );
+  }
+
+  return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -227,7 +247,16 @@ const ClientDashboard: React.FC = () => {
               .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
               .slice(0, 6)
               .map(debtor => (
-                <DebtorOverviewCard key={debtor.id} debtor={debtor} />
+                <div key={debtor.id} className="relative group">
+                  <DebtorOverviewCard debtor={debtor} />
+                  <button
+                    onClick={() => handleViewDebtor(debtor)}
+                    className="absolute top-2 right-2 bg-blue-600 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Voir le dossier"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                </div>
               ))}
           </div>
         )}
