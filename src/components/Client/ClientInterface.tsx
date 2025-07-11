@@ -200,7 +200,7 @@ if (isLoading && !clientData) {
 const totalAmount = clientDebiteurs.reduce((sum, d) => sum + d.totalAmount, 0);
 const totalPaid = clientDebiteurs.reduce((sum, d) => sum + d.paidAmount, 0);
 const totalOriginal = clientDebiteurs.reduce((sum, d) => sum + d.originalAmount, 0);
-const recoveryRate = totalOriginal > 0 ? (totalPaid / totalOriginal) * 100 : 0;
+
 const criticalCount = clientDebiteurs.filter(d => d.recoveryStatus === 'critical').length;
 
 
