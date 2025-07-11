@@ -40,13 +40,13 @@ const ClientInterface: React.FC = () => {
   const { clients, debtors, invoices, payments, communications, refreshData } = useCrm();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDebiteur, setSelectedDebiteur] = useState<Debiteur | null>(null);
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('daysOverdue');
   const [clientData, setClientData] = useState<any>(null);
   const [clientDebtors, setClientDebtors] = useState<any[]>([]);
   const [selectedDebtor, setSelectedDebtor] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [clientDebiteurs, setClientDebiteurs] = useState<Debiteur[]>([]);
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactType, setContactType] = useState<'email' | 'phone' | null>(null);
   const [contactMessage, setContactMessage] = useState('');
@@ -105,7 +105,7 @@ const ClientInterface: React.FC = () => {
         setIsLoading(false);
       } catch (error) {
         console.error('Error loading client data:', error);
-        setIsLoading(false);
+        setClientDebiteurs(formattedDebiteurs);
       }
     };
     
@@ -113,17 +113,17 @@ const ClientInterface: React.FC = () => {
   }, [user, clients, debtors, invoices, payments, communications]);
 
   // Filtrer et trier les débiteurs
-  const filteredDebtors = clientDebtors.filter(debtor => {
+  const filteredDebiteurs = clientDebiteurs.filter(debiteur => {
     const matchesSearch = 
-      debtor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (debtor.company && debtor.company.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesStatus = statusFilter === 'all' || debtor.status === statusFilter;
+      debiteur.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (debiteur.company && debiteur.company.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      debiteur.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || debiteur.status === statusFilter;
     
     return matchesSearch && matchesStatus;
   });
 
-  const sortedDebtors = [...filteredDebtors].sort((a, b) => {
+  const sortedDebiteurs = [...filteredDebiteurs].sort((a, b) => {
     switch (sortBy) {
       case 'daysOverdue':
         return b.daysOverdue - a.daysOverdue;
@@ -161,7 +161,7 @@ const ClientInterface: React.FC = () => {
 
   // Gérer le retour à la liste des débiteurs
   const handleBackToList = () => {
-    setSelectedDebtor(null);
+    setSelectedDebiteur(null);
   };
 
   // Gérer l'envoi d'un message au gestionnaire
@@ -192,26 +192,37 @@ const ClientInterface: React.FC = () => {
       <div className="p-6 flex items-center justify-center h-full">
         <div className="text-center">
           <RefreshCw className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-500">Chargement des données...</p>
-        </div>
-      </div>
-    );
-  }
+  const totalAmount = clientDebiteurs.reduce((sum, d) => sum + d.totalAmount, 0);
+  const totalPaid = clientDebiteurs.reduce((sum, d) => sum + d.paidAmount, 0);
+  const totalOriginal = clientDebiteurs.reduce((sum, d) => sum + d.originalAmount, 0);
+  const recoveryRate = totalOriginal > 0 ? (totalPaid / totalOriginal) * 100 : 0;
+  const criticalCount = clientDebiteurs.filter(d => d.recoveryStatus === 'critical').length;
 
-  // Affichage des détails d'un débiteur sélectionné
-  if (selectedDebtor) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="flex items-center">
-          <button
-            onClick={handleBackToList}
-            className="flex items-center text-blue-600 hover:text-blue-800 mr-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Retour à la liste
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900">Détails du débiteur</h1>
-        </div>
+  // If a debiteur is selected, show its details
+if (selectedDebiteur) {
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex items-center">
+        <button
+          onClick={handleBackToList}
+          className="flex items-center text-blue-600 hover:text-blue-800 mr-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Retour à la liste
+        </button>
+        <h1 className="text-2xl font-bold text-gray-900">Détails du débiteur</h1>
+      </div>
+
+      {/* Tu peux afficher les détails ici */}
+      <div>
+        <p>Nom : {selectedDebiteur.name}</p>
+        <p>Email : {selectedDebiteur.email}</p>
+        {/* Ajoute les autres infos ici */}
+      </div>
+    </div>
+  );
+}
+
 
         {/* En-tête du débiteur */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -805,7 +816,7 @@ const ClientInterface: React.FC = () => {
                   <div className="flex items-start">
                     <Info className="h-6 w-6 text-blue-600 mr-4 mt-0.5" />
                     <div>
-                      <h4 className="font-medium text-blue-900 mb-2">Informations sur le processus de recouvrement</h4>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                       <p className="text-sm text-blue-700 mb-4">
                         Ce débiteur est actuellement en phase de recouvrement. Notre équipe travaille activement pour récupérer les montants dus selon le processus suivant :
                       </p>
@@ -982,46 +993,46 @@ const ClientInterface: React.FC = () => {
                   }`}>
                     {debtor.type === 'company' ? (
                       <Building className={`h-6 w-6 ${
+            <p className="text-sm text-gray-500">
+              {sortedDebiteurs.length} débiteur{sortedDebiteurs.length > 1 ? 's' : ''} trouvé{sortedDebiteurs.length > 1 ? 's' : ''}
+                        debtor.recoveryStatus === 'yellow' ? 'text-yellow-600' : 'text-blue-600'
+                      }`} />
+            {sortedDebiteurs.map(debiteur => (
+              <div key={debiteur.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleSelectDebiteur(debiteur)}>
                         debtor.recoveryStatus === 'critical' ? 'text-red-600' :
                         debtor.recoveryStatus === 'orange' ? 'text-orange-600' :
                         debtor.recoveryStatus === 'yellow' ? 'text-yellow-600' : 'text-blue-600'
-                      }`} />
-                    ) : (
-                      <User className={`h-6 w-6 ${
-                        debtor.recoveryStatus === 'critical' ? 'text-red-600' :
-                        debtor.recoveryStatus === 'orange' ? 'text-orange-600' :
-                        debtor.recoveryStatus === 'yellow' ? 'text-yellow-600' : 'text-blue-600'
-                      }`} />
-                    )}
-                  </div>
+                      debiteur.recoveryStatus === 'critical' ? 'bg-red-100' :
+                      debiteur.recoveryStatus === 'orange' ? 'bg-orange-100' :
+                      debiteur.recoveryStatus === 'yellow' ? 'bg-yellow-100' : 'bg-blue-100'
                   
-                  <div>
+                      {debiteur.type === 'company' ? (
                     <div className="flex items-center space-x-2">
-                      <h3 className="font-medium text-gray-900">{debtor.name}</h3>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        debtor.recoveryStatus === 'critical' ? 'bg-red-100 text-red-800' :
+                          debiteur.recoveryStatus === 'critical' ? 'text-red-600' :
+                          debiteur.recoveryStatus === 'orange' ? 'text-orange-600' :
+                          debiteur.recoveryStatus === 'yellow' ? 'text-yellow-600' : 'text-blue-600'
                         debtor.recoveryStatus === 'orange' ? 'bg-orange-100 text-orange-800' :
                         debtor.recoveryStatus === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
-                        {debtor.recoveryStatus === 'critical' ? 'Critique' :
-                         debtor.recoveryStatus === 'orange' ? 'Relance 2' :
+                      <h3 className="font-medium text-gray-900">{debiteur.name}</h3>
+                          debiteur.recoveryStatus === 'critical' ? 'text-red-600' :
+                        {debiteur.company && (
+                          <span className="text-sm text-gray-500">{debiteur.company}</span>
                          debtor.recoveryStatus === 'yellow' ? 'Relance 1' : 'Normal'}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          debiteur.recoveryStatus === 'critical' ? 'bg-red-100 text-red-800' :
+                          debiteur.recoveryStatus === 'orange' ? 'bg-orange-100 text-orange-800' :
+                          debiteur.recoveryStatus === 'yellow' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'
                       {debtor.company && (
-                        <span className="flex items-center">
-                          <Building className="h-4 w-4 mr-1 text-gray-400" />
-                          {debtor.company}
+                          {debiteur.recoveryStatus === 'critical' ? 'Critique' :
+                           debiteur.recoveryStatus === 'orange' ? 'Urgent' :
+                           debiteur.recoveryStatus === 'yellow' ? 'Attention' : 'Normal'}
                         </span>
                       )}
                       <span className="flex items-center">
                         <Mail className="h-4 w-4 mr-1 text-gray-400" />
                         {debtor.email}
-                      </span>
-                    </div>
+                    <div className="text-lg font-bold text-gray-900">{formatCurrency(debiteur.totalAmount)}</div>
+                    <div className="text-sm text-gray-500">Dû depuis {debiteur.daysOverdue} jours</div>
                   </div>
                 </div>
                 
@@ -1041,14 +1052,14 @@ const ClientInterface: React.FC = () => {
                         debtor.daysOverdue > 15 ? 'text-orange-600' : 
                         'text-yellow-600'
                       }`}>
-                        <Clock className="h-4 w-4 mr-1" />
+                  <div className="flex justify-between text-xs text-gray-500 mb-1">
                         {debtor.daysOverdue} jours
-                      </span>
+                    <span>{Math.round((debiteur.paidAmount / debiteur.originalAmount) * 100)}%</span>
                     ) : (
                       <span className="flex items-center text-sm font-medium text-green-600">
                         <CheckCircle className="h-4 w-4 mr-1" />
                         À jour
-                      </span>
+                      style={{ width: `${(debiteur.paidAmount / debiteur.originalAmount) * 100}%` }}
                     )}
                   </div>
                 </div>
@@ -1138,7 +1149,7 @@ const ClientInterface: React.FC = () => {
                   >
                     Annuler
                   </button>
-                  <button 
+                      alert('Demande envoyée avec succès ! Votre gestionnaire vous contactera prochainement.');
                     onClick={handleSendMessage}
                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
