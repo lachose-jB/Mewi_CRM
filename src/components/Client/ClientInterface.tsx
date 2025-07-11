@@ -145,61 +145,66 @@ const ClientInterface: React.FC = () => {
   const criticalDebtors = clientDebtors.filter(d => d.recoveryStatus === 'critical').length;
   const overdueDebtors = clientDebtors.filter(d => d.daysOverdue > 0).length;
   const recoveryRate = totalDebt > 0 ? (totalRecovered / totalDebt) * 100 : 0;
+// Gérer le rafraîchissement des données
+const handleRefresh = async () => {
+  setIsLoading(true);
+  await refreshData();
+  setIsLoading(false);
+};
 
-  // Gérer le rafraîchissement des données
-  const handleRefresh = async () => {
-    setIsLoading(true);
-    await refreshData();
-    setIsLoading(false);
-  };
+// Gérer la sélection d'un débiteur
+const handleSelectDebtor = (debtor: any) => {
+  setSelectedDebtor(debtor);
+  setActiveTab('overview');
+};
 
-  // Gérer la sélection d'un débiteur
-  const handleSelectDebtor = (debtor: any) => {
-    setSelectedDebtor(debtor);
-    setActiveTab('overview');
-  };
+// Gérer le retour à la liste des débiteurs
+const handleBackToList = () => {
+  setSelectedDebtor(null);
+};
 
-  // Gérer le retour à la liste des débiteurs
-  const handleBackToList = () => {
-    setSelectedDebiteur(null);
-  };
+// Gérer l'envoi d'un message au gestionnaire
+const handleSendMessage = () => {
+  console.log('Message envoyé:', contactType, contactMessage);
+  setShowContactModal(false);
+  setContactMessage('');
+  setContactType(null);
+};
 
-  // Gérer l'envoi d'un message au gestionnaire
-  const handleSendMessage = () => {
-    // Logique d'envoi de message
-    console.log('Message envoyé:', contactType, contactMessage);
-    setShowContactModal(false);
-    setContactMessage('');
-    setContactType(null);
-  };
-
-  // Si aucun client n'est trouvé
-  if (!clientData && !isLoading) {
-    return (
-      <div className="p-6 flex items-center justify-center h-full">
-        <div className="text-center">
-          <AlertCircle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">Aucune information client trouvée</p>
-          <p className="text-gray-400 mt-2">Veuillez contacter le support technique</p>
-        </div>
+// Si aucun client n'est trouvé
+if (!clientData && !isLoading) {
+  return (
+    <div className="p-6 flex items-center justify-center h-full">
+      <div className="text-center">
+        <AlertCircle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+        <p className="text-gray-500 text-lg">Aucune information client trouvée</p>
+        <p className="text-gray-400 mt-2">Veuillez contacter le support technique</p>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  // Affichage pendant le chargement
-  if (isLoading && !clientData) {
-    return (
-      <div className="p-6 flex items-center justify-center h-full">
-        <div className="text-center">
-          <RefreshCw className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-  const totalAmount = clientDebiteurs.reduce((sum, d) => sum + d.totalAmount, 0);
-  const totalPaid = clientDebiteurs.reduce((sum, d) => sum + d.paidAmount, 0);
-  const totalOriginal = clientDebiteurs.reduce((sum, d) => sum + d.originalAmount, 0);
-  const recoveryRate = totalOriginal > 0 ? (totalPaid / totalOriginal) * 100 : 0;
-  const criticalCount = clientDebiteurs.filter(d => d.recoveryStatus === 'critical').length;
+// Affichage pendant le chargement
+if (isLoading && !clientData) {
+  return (
+    <div className="p-6 flex items-center justify-center h-full">
+      <div className="text-center">
+        <RefreshCw className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
+        <p className="text-gray-500">Chargement des données client…</p>
+      </div>
+    </div>
+  );
+}
 
-  // If a debiteur is selected, show its details
-if (selectedDebiteur) {
+// Calculs des statistiques globales
+const totalAmount = clientDebiteurs.reduce((sum, d) => sum + d.totalAmount, 0);
+const totalPaid = clientDebiteurs.reduce((sum, d) => sum + d.paidAmount, 0);
+const totalOriginal = clientDebiteurs.reduce((sum, d) => sum + d.originalAmount, 0);
+const recoveryRate = totalOriginal > 0 ? (totalPaid / totalOriginal) * 100 : 0;
+const criticalCount = clientDebiteurs.filter(d => d.recoveryStatus === 'critical').length;
+
+// Si un débiteur est sélectionné, afficher les détails
+if (selectedDebtor) {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center">
@@ -213,103 +218,130 @@ if (selectedDebiteur) {
         <h1 className="text-2xl font-bold text-gray-900">Détails du débiteur</h1>
       </div>
 
-      {/* Tu peux afficher les détails ici */}
-      <div>
-        <p>Nom : {selectedDebiteur.name}</p>
-        <p>Email : {selectedDebiteur.email}</p>
-        {/* Ajoute les autres infos ici */}
+      {/* En-tête du débiteur */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center">
+            <div
+              className={`p-3 rounded-full ${
+                selectedDebtor.recoveryStatus === 'critical'
+                  ? 'bg-red-100'
+                  : selectedDebtor.recoveryStatus === 'orange'
+                  ? 'bg-orange-100'
+                  : selectedDebtor.recoveryStatus === 'yellow'
+                  ? 'bg-yellow-100'
+                  : 'bg-blue-100'
+              }`}
+            >
+              {selectedDebtor.type === 'company' ? (
+                <Building
+                  className={`h-6 w-6 ${
+                    selectedDebtor.recoveryStatus === 'critical'
+                      ? 'text-red-600'
+                      : selectedDebtor.recoveryStatus === 'orange'
+                      ? 'text-orange-600'
+                      : selectedDebtor.recoveryStatus === 'yellow'
+                      ? 'text-yellow-600'
+                      : 'text-blue-600'
+                  }`}
+                />
+              ) : (
+                <User
+                  className={`h-6 w-6 ${
+                    selectedDebtor.recoveryStatus === 'critical'
+                      ? 'text-red-600'
+                      : selectedDebtor.recoveryStatus === 'orange'
+                      ? 'text-orange-600'
+                      : selectedDebtor.recoveryStatus === 'yellow'
+                      ? 'text-yellow-600'
+                      : 'text-blue-600'
+                  }`}
+                />
+              )}
+            </div>
+
+            <div className="ml-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-xl font-bold text-gray-900">{selectedDebtor.name}</h1>
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    selectedDebtor.recoveryStatus === 'critical'
+                      ? 'bg-red-100 text-red-800'
+                      : selectedDebtor.recoveryStatus === 'orange'
+                      ? 'bg-orange-100 text-orange-800'
+                      : selectedDebtor.recoveryStatus === 'yellow'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-blue-100 text-blue-800'
+                  }`}
+                >
+                  {selectedDebtor.recoveryStatus === 'critical'
+                    ? 'Critique'
+                    : selectedDebtor.recoveryStatus === 'orange'
+                    ? 'Relance 2'
+                    : selectedDebtor.recoveryStatus === 'yellow'
+                    ? 'Relance 1'
+                    : 'Normal'}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-gray-500">
+                {selectedDebtor.company && (
+                  <span className="flex items-center">
+                    <Building className="h-4 w-4 mr-1 text-gray-400" />
+                    {selectedDebtor.company}
+                  </span>
+                )}
+                <span className="flex items-center">
+                  <Mail className="h-4 w-4 mr-1 text-gray-400" />
+                  {selectedDebtor.email}
+                </span>
+                <span className="flex items-center">
+                  <Phone className="h-4 w-4 mr-1 text-gray-400" />
+                  {selectedDebtor.phone}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-right">
+            <div className="text-2xl font-bold text-gray-900">
+              {formatCurrency(selectedDebtor.totalAmount)}
+            </div>
+            <div className="text-sm text-gray-500">
+              {selectedDebtor.paidAmount > 0 ? (
+                <span>{formatCurrency(selectedDebtor.paidAmount)} recouvrés</span>
+              ) : (
+                <span>0% recouvré</span>
+              )}
+            </div>
+            <div className="flex items-center justify-end mt-2">
+              {selectedDebtor.daysOverdue > 0 ? (
+                <span
+                  className={`flex items-center text-sm font-medium ${
+                    selectedDebtor.daysOverdue > 30
+                      ? 'text-red-600'
+                      : selectedDebtor.daysOverdue > 15
+                      ? 'text-orange-600'
+                      : 'text-yellow-600'
+                  }`}
+                >
+                  <Clock className="h-4 w-4 mr-1" />
+                  {selectedDebtor.daysOverdue} jours de retard
+                </span>
+              ) : (
+                <span className="flex items-center text-sm font-medium text-green-600">
+                  <CheckCircle className="h-4 w-4 mr-1" />
+                  À jour
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-
-        {/* En-tête du débiteur */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center">
-              <div className={`p-3 rounded-full ${
-                selectedDebtor.recoveryStatus === 'critical' ? 'bg-red-100' :
-                selectedDebtor.recoveryStatus === 'orange' ? 'bg-orange-100' :
-                selectedDebtor.recoveryStatus === 'yellow' ? 'bg-yellow-100' : 'bg-blue-100'
-              }`}>
-                {selectedDebtor.type === 'company' ? (
-                  <Building className={`h-6 w-6 ${
-                    selectedDebtor.recoveryStatus === 'critical' ? 'text-red-600' :
-                    selectedDebtor.recoveryStatus === 'orange' ? 'text-orange-600' :
-                    selectedDebtor.recoveryStatus === 'yellow' ? 'text-yellow-600' : 'text-blue-600'
-                  }`} />
-                ) : (
-                  <User className={`h-6 w-6 ${
-                    selectedDebtor.recoveryStatus === 'critical' ? 'text-red-600' :
-                    selectedDebtor.recoveryStatus === 'orange' ? 'text-orange-600' :
-                    selectedDebtor.recoveryStatus === 'yellow' ? 'text-yellow-600' : 'text-blue-600'
-                  }`} />
-                )}
-              </div>
-              
-              <div className="ml-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-xl font-bold text-gray-900">{selectedDebtor.name}</h1>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    selectedDebtor.recoveryStatus === 'critical' ? 'bg-red-100 text-red-800' :
-                    selectedDebtor.recoveryStatus === 'orange' ? 'bg-orange-100 text-orange-800' :
-                    selectedDebtor.recoveryStatus === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-blue-100 text-blue-800'
-                  }`}>
-                    {selectedDebtor.recoveryStatus === 'critical' ? 'Critique' :
-                     selectedDebtor.recoveryStatus === 'orange' ? 'Relance 2' :
-                     selectedDebtor.recoveryStatus === 'yellow' ? 'Relance 1' : 'Normal'}
-                  </span>
-                </div>
-                
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-gray-500">
-                  {selectedDebtor.company && (
-                    <span className="flex items-center">
-                      <Building className="h-4 w-4 mr-1 text-gray-400" />
-                      {selectedDebtor.company}
-                    </span>
-                  )}
-                  <span className="flex items-center">
-                    <Mail className="h-4 w-4 mr-1 text-gray-400" />
-                    {selectedDebtor.email}
-                  </span>
-                  <span className="flex items-center">
-                    <Phone className="h-4 w-4 mr-1 text-gray-400" />
-                    {selectedDebtor.phone}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="text-right">
-              <div className="text-2xl font-bold text-gray-900">{formatCurrency(selectedDebtor.totalAmount)}</div>
-              <div className="text-sm text-gray-500">
-                {selectedDebtor.paidAmount > 0 ? (
-                  <span>{formatCurrency(selectedDebtor.paidAmount)} recouvrés</span>
-                ) : (
-                  <span>0% recouvré</span>
-                )}
-              </div>
-              <div className="flex items-center justify-end mt-2">
-                {selectedDebtor.daysOverdue > 0 ? (
-                  <span className={`flex items-center text-sm font-medium ${
-                    selectedDebtor.daysOverdue > 30 ? 'text-red-600' : 
-                    selectedDebtor.daysOverdue > 15 ? 'text-orange-600' : 
-                    'text-yellow-600'
-                  }`}>
-                    <Clock className="h-4 w-4 mr-1" />
-                    {selectedDebtor.daysOverdue} jours de retard
-                  </span>
-                ) : (
-                  <span className="flex items-center text-sm font-medium text-green-600">
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    À jour
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
           
           {/* Barre de progression */}
           <div className="mt-4">
@@ -816,7 +848,7 @@ if (selectedDebiteur) {
                   <div className="flex items-start">
                     <Info className="h-6 w-6 text-blue-600 mr-4 mt-0.5" />
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <h4 className="font-medium text-blue-900 mb-2">Informations sur le processus de recouvrement</h4>
                       <p className="text-sm text-blue-700 mb-4">
                         Ce débiteur est actuellement en phase de recouvrement. Notre équipe travaille activement pour récupérer les montants dus selon le processus suivant :
                       </p>
@@ -1149,7 +1181,7 @@ if (selectedDebiteur) {
                   >
                     Annuler
                   </button>
-                      alert('Demande envoyée avec succès ! Votre gestionnaire vous contactera prochainement.');
+                  <button 
                     onClick={handleSendMessage}
                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
