@@ -16,62 +16,68 @@ import {
   Upload,
   RefreshCw,
   Building,
-  UserPlus
+  UserPlus,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  MessageSquare
 } from 'lucide-react';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
 import DebtorForm from './DebtorForm';
 
-const ClientPortfolio: React.FC = () => {
+const DebiteurPortfolio: React.FC = () => {
   const { clients, invoices, refreshData } = useCrm();
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedClient, setSelectedClient] = useState<string | null>(null);
+  const [selectedDebiteur, setSelectedDebiteur] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [clientDetails, setClientDetails] = useState<Record<string, any>>({});
+  const [debiteurDetails, setDebiteurDetails] = useState<Record<string, any>>({});
   const [showDebtorForm, setShowDebtorForm] = useState(false);
   const [editingDebtor, setEditingDebtor] = useState<any>(null);
 
-  // Filtrer les clients selon le rôle
-  const myClients = user?.role === 'manager' 
+  // Filtrer les débiteurs selon le rôle
+  const myDebiteurs = user?.role === 'manager' 
     ? clients.filter(client => client.manager_id === user.id)
     : clients;
 
-  // Load client details when a client is selected
+  // Load debiteur details when a debiteur is selected
   useEffect(() => {
-    const loadClientDetails = async () => {
-      if (!selectedClient) return;
+    const loadDebiteurDetails = async () => {
+      if (!selectedDebiteur) return;
       
       try {
-        if (!clientDetails[selectedClient]) {
+        if (!debiteurDetails[selectedDebiteur]) {
           setIsLoading(true);
           
           // Get related data from context
-          const clientInvoices = invoices.filter(inv => inv.client_id === selectedClient);
+          const debiteurInvoices = invoices.filter(inv => inv.client_id === selectedDebiteur);
           
-          setClientDetails(prev => ({
+          setDebiteurDetails(prev => ({
             ...prev,
-            [selectedClient]: {
-              invoices: clientInvoices
+            [selectedDebiteur]: {
+              invoices: debiteurInvoices
             }
           }));
           
           setIsLoading(false);
         }
       } catch (error) {
-        console.error('Error loading client details:', error);
+        console.error('Error loading debiteur details:', error);
         setIsLoading(false);
       }
     };
     
-    loadClientDetails();
-  }, [selectedClient, invoices]);
+    loadDebiteurDetails();
+  }, [selectedDebiteur, invoices]);
 
-  const filteredClients = myClients.filter(client => {
-    const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         client.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || client.status === statusFilter;
+  const filteredDebiteurs = myDebiteurs.filter(debiteur => {
+    const matchesSearch = debiteur.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         debiteur.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || debiteur.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -97,12 +103,12 @@ const ClientPortfolio: React.FC = () => {
     return priorities[status as keyof typeof priorities] || 0;
   };
 
-  const sortedClients = [...filteredClients].sort((a, b) => 
+  const sortedDebiteurs = [...filteredDebiteurs].sort((a, b) => 
     getStatusPriority(b.status) - getStatusPriority(a.status)
   );
 
-  const totalAmount = filteredClients.reduce((sum, client) => sum + client.total_amount, 0);
-  const criticalCount = filteredClients.filter(client => client.status === 'critical').length;
+  const totalAmount = filteredDebiteurs.reduce((sum, debiteur) => sum + debiteur.total_amount, 0);
+  const criticalCount = filteredDebiteurs.filter(debiteur => debiteur.status === 'critical').length;
 
   const handleRefreshData = async () => {
     setIsLoading(true);
@@ -115,20 +121,20 @@ const ClientPortfolio: React.FC = () => {
     setShowDebtorForm(true);
   };
 
-  const handleEditDebtor = (client: any) => {
-    // Convert client data to debtor form format
+  const handleEditDebtor = (debiteur: any) => {
+    // Convert debiteur data to debtor form format
     const debtorData = {
-      name: client.name,
-      email: client.email,
-      phone: client.phone,
-      mobilePhone: client.phone,
-      mainAddress: client.address,
-      company: client.company,
-      totalAmount: client.total_amount.toString(),
-      debtorType: client.company ? 'company' : 'individual',
-      status: client.status === 'blue' ? 'new' : 
-             client.status === 'yellow' ? 'inProgress' : 
-             client.status === 'orange' ? 'inProgress' : 'litigation'
+      name: debiteur.name,
+      email: debiteur.email,
+      phone: debiteur.phone,
+      mobilePhone: debiteur.phone,
+      mainAddress: debiteur.address,
+      company: debiteur.company,
+      totalAmount: debiteur.total_amount.toString(),
+      debtorType: debiteur.company ? 'company' : 'individual',
+      status: debiteur.status === 'blue' ? 'new' : 
+             debiteur.status === 'yellow' ? 'inProgress' : 
+             debiteur.status === 'orange' ? 'inProgress' : 'litigation'
     };
     
     setEditingDebtor(debtorData);
@@ -191,7 +197,7 @@ const ClientPortfolio: React.FC = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Dossiers</p>
-              <p className="text-2xl font-bold text-gray-900">{filteredClients.length}</p>
+              <p className="text-2xl font-bold text-gray-900">{filteredDebiteurs.length}</p>
             </div>
           </div>
         </div>
@@ -263,39 +269,39 @@ const ClientPortfolio: React.FC = () => {
         </div>
       </div>
 
-      {/* Liste des clients */}
+      {/* Liste des débiteurs */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">
-            Débiteurs ({sortedClients.length})
+            Débiteurs ({sortedDebiteurs.length})
           </h3>
         </div>
         
         <div className="divide-y divide-gray-200">
-          {isLoading && sortedClients.length === 0 ? (
+          {isLoading && sortedDebiteurs.length === 0 ? (
             <div className="p-6 text-center">
               <RefreshCw className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
               <p className="text-gray-600">Chargement des débiteurs...</p>
             </div>
-          ) : sortedClients.length === 0 ? (
+          ) : sortedDebiteurs.length === 0 ? (
             <div className="p-6 text-center">
               <p className="text-gray-600">Aucun débiteur trouvé</p>
             </div>
           ) : (
-            sortedClients.map((client) => {
-              const statusConfig = getStatusConfig(client.status);
-              const detail = clientDetails[client.id];
+            sortedDebiteurs.map((debiteur) => {
+              const statusConfig = getStatusConfig(debiteur.status);
+              const detail = debiteurDetails[debiteur.id];
               
               return (
                 <div 
-                  key={client.id} 
+                  key={debiteur.id} 
                   className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() => setSelectedClient(selectedClient === client.id ? null : client.id)}
+                  onClick={() => setSelectedDebiteur(selectedDebiteur === debiteur.id ? null : debiteur.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                        {client.company ? (
+                        {debiteur.company ? (
                           <Building className="h-6 w-6 text-gray-500" />
                         ) : (
                           <User className="h-6 w-6 text-gray-500" />
@@ -303,23 +309,23 @@ const ClientPortfolio: React.FC = () => {
                       </div>
                       <div className="ml-4">
                         <div className="flex items-center space-x-3">
-                          <h4 className="text-lg font-medium text-gray-900">{client.name}</h4>
+                          <h4 className="text-lg font-medium text-gray-900">{debiteur.name}</h4>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.color}`}>
                             {statusConfig.label}
                           </span>
                         </div>
                         <div className="flex items-center space-x-4 mt-1">
-                          <p className="text-sm text-gray-500">{client.email}</p>
-                          <p className="text-sm text-gray-500">{client.phone}</p>
+                          <p className="text-sm text-gray-500">{debiteur.email}</p>
+                          <p className="text-sm text-gray-500">{debiteur.phone}</p>
                         </div>
                       </div>
                     </div>
                     
                     <div className="flex items-center space-x-6">
                       <div className="text-right">
-                        <p className="text-lg font-bold text-gray-900">{formatCurrency(client.total_amount)}</p>
+                        <p className="text-lg font-bold text-gray-900">{formatCurrency(debiteur.total_amount)}</p>
                         <p className="text-sm text-gray-500">
-                          Dernier contact: {new Date(client.last_contact || Date.now()).toLocaleDateString('fr-FR')}
+                          Dernier contact: {new Date(debiteur.last_contact || Date.now()).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
                       
@@ -327,7 +333,7 @@ const ClientPortfolio: React.FC = () => {
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleEditDebtor(client);
+                            handleEditDebtor(debiteur);
                           }}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         >
@@ -350,7 +356,7 @@ const ClientPortfolio: React.FC = () => {
                   </div>
                   
                   {/* Détails étendus */}
-                  {selectedClient === client.id && (
+                  {selectedDebiteur === debiteur.id && (
                     <div className="mt-6 pt-6 border-t border-gray-200">
                       {isLoading && !detail ? (
                         <div className="flex justify-center">
@@ -361,9 +367,9 @@ const ClientPortfolio: React.FC = () => {
                           <div>
                             <h5 className="text-sm font-medium text-gray-900 mb-3">Informations Débiteur</h5>
                             <div className="space-y-2 text-sm text-gray-600">
-                              <p><span className="font-medium">Adresse:</span> {client.address}</p>
-                              <p><span className="font-medium">Créé le:</span> {new Date(client.created_at).toLocaleDateString('fr-FR')}</p>
-                              <p><span className="font-medium">Notes:</span> {client.notes?.join(', ') || 'Aucune note'}</p>
+                              <p><span className="font-medium">Adresse:</span> {debiteur.address}</p>
+                              <p><span className="font-medium">Créé le:</span> {new Date(debiteur.created_at).toLocaleDateString('fr-FR')}</p>
+                              <p><span className="font-medium">Notes:</span> {debiteur.notes?.join(', ') || 'Aucune note'}</p>
                             </div>
                           </div>
                           
@@ -410,4 +416,4 @@ const ClientPortfolio: React.FC = () => {
   );
 };
 
-export default ClientPortfolio;
+export default DebiteurPortfolio;
