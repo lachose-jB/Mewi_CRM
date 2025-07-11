@@ -146,7 +146,76 @@ const ClientInterface: React.FC = () => {
   const overdueDebtors = clientDebtors.filter(d => d.daysOverdue > 0).length;
   const recoveryRate = totalDebt > 0 ? (totalRecovered / totalDebt) * 100 : 0;
 
+        // Rafraîchissement des données
+const handleRefresh = async () => {
+  setIsLoading(true);
+  await refreshData();
+  setIsLoading(false);
+};
 
+// Sélection d’un débiteur
+const handleSelectDebtor = (debtor: DebtorType) => {
+  setSelectedDebtor(debtor);
+  setActiveTab('overview');
+};
+
+// Retour à la liste
+const handleBackToList = () => {
+  setSelectedDebtor(null);
+};
+
+// Envoi de message
+const handleSendMessage = () => {
+  console.log('Message envoyé:', contactType, contactMessage);
+  setShowContactModal(false);
+  setContactMessage('');
+  setContactType(null);
+};
+
+// Aucune donnée client
+if (!clientData && !isLoading) {
+  return (
+    <div className="p-6 flex items-center justify-center h-full">
+      <div className="text-center">
+        <AlertCircle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+        <p className="text-gray-500 text-lg">Aucune information client trouvée</p>
+        <p className="text-gray-400 mt-2">Veuillez contacter le support technique</p>
+      </div>
+    </div>
+  );
+}
+
+// Affichage pendant le chargement
+if (isLoading && !clientData) {
+  return (
+    <div className="p-6 flex items-center justify-center h-full">
+      <div className="text-center">
+        <RefreshCw className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
+        <p className="text-gray-500">Chargement des données client…</p>
+      </div>
+    </div>
+  );
+}
+
+// Statistiques globales
+const totalAmount = clientDebiteurs.reduce((sum, d) => sum + d.totalAmount, 0);
+const totalPaid = clientDebiteurs.reduce((sum, d) => sum + d.paidAmount, 0);
+const totalOriginal = clientDebiteurs.reduce((sum, d) => sum + d.originalAmount, 0);
+const criticalCount = clientDebiteurs.filter(d => d.recoveryStatus === 'critical').length;
+
+// Barre de progression (à intégrer dans ton JSX principal)
+<div className="mt-4">
+  <div className="flex justify-between text-xs text-gray-500 mb-1">
+    <span>Progression du recouvrement</span>
+    <span>{selectedDebtor.recoveryRate.toFixed(1)}%</span>
+  </div>
+  <div className="w-full bg-gray-200 rounded-full h-1.5">
+    <div
+      className="bg-green-500 h-1.5 rounded-full"
+      style={{ width: `${selectedDebtor.recoveryRate}%` }}
+    ></div>
+  </div>
+</div>
 
         {/* Navigation par onglets */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
