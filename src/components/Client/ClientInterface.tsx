@@ -167,8 +167,6 @@ const ClientInterface: React.FC = () => {
         </div>
       )}
 
-      {/* Ici tu peux continuer avec les composants d’affichage de débiteurs, navigation onglets, etc. */}
-    </div>
         {/* Navigation par onglets */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="border-b border-gray-200">
