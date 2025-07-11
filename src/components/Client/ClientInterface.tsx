@@ -167,7 +167,7 @@ const ClientInterface: React.FC = () => {
         </div>
       )}
 
-        {/* Navigation par onglets */}
+         {/* Navigation par onglets */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-6 px-6">
