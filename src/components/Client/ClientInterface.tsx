@@ -1,90 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Users, 
-  Search, 
-  Filter, 
-  Phone, 
-  Mail, 
-  Calendar, 
-  Clock, 
-  FileText, 
-  User, 
-  MessageSquare, 
-  Target, 
-  Activity, 
-  Eye, 
-  Edit3, 
-  Download, 
-  Printer, 
-  Share2, 
-  Settings, 
-  RefreshCw, 
-  CheckCircle, 
-  AlertCircle, 
-  X, 
-  ArrowRight, 
-  ArrowLeft, 
-  Plus, 
-  Zap, 
-  TrendingUp, 
-  TrendingDown,
-  BarChart3,
-  Building
+import {
+  AlertCircle, RefreshCw, Building, User, Mail, Phone
 } from 'lucide-react';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { formatCurrency, getStatusConfig } from '../../utils/dataUtils';
+import { formatCurrency } from '../../utils/dataUtils';
 import DebtorOverviewCard from '../Client/DebtorOverviewCard';
 
 const ClientInterface: React.FC = () => {
   const { clients, debtors, invoices, payments, communications, refreshData } = useCrm();
   const { user } = useAuth();
+
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedDebiteur, setSelectedDebiteur] = useState<Debiteur | null>(null);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('daysOverdue');
+  const [selectedDebtor, setSelectedDebtor] = useState<any>(null);
   const [clientData, setClientData] = useState<any>(null);
   const [clientDebtors, setClientDebtors] = useState<any[]>([]);
-  const [selectedDebtor, setSelectedDebtor] = useState<any>(null);
-  const [clientDebiteurs, setClientDebiteurs] = useState<Debiteur[]>([]);
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactType, setContactType] = useState<'email' | 'phone' | null>(null);
   const [contactMessage, setContactMessage] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('daysOverdue');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
 
-  // Charger les données du client et ses débiteurs
+  // Charger les données
   useEffect(() => {
     const loadClientData = async () => {
       setIsLoading(true);
       try {
-        // Trouver le client correspondant à l'utilisateur connecté
         const client = clients.find(c => c.user_id === user?.id || c.email === user?.email);
-        
         if (client) {
           setClientData(client);
-          
-          // Récupérer les débiteurs associés à ce client
           const clientDebtorsList = debtors.filter(d => d.clientId === client.id);
-          
-          // Enrichir les données des débiteurs avec des informations supplémentaires
+
           const enrichedDebtors = clientDebtorsList.map(debtor => {
-            // Factures du débiteur
             const debtorInvoices = invoices.filter(inv => inv.debtorId === debtor.id);
-            
-            // Paiements du débiteur
             const debtorPayments = payments.filter(p => p.debtorId === debtor.id);
-            
-            // Communications avec le débiteur
             const debtorCommunications = communications.filter(c => c.debtorId === debtor.id);
-            
-            // Calcul des montants
             const totalAmount = debtorInvoices.reduce((sum, inv) => sum + inv.amount, 0);
             const paidAmount = debtorPayments.reduce((sum, p) => sum + p.amount, 0);
-            
-            // Calcul du taux de recouvrement
-            const recoveryRate = debtor.originalAmount > 0 
-              ? (paidAmount / debtor.originalAmount) * 100 
+            const recoveryRate = debtor.originalAmount > 0
+              ? (paidAmount / debtor.originalAmount) * 100
               : 0;
-            
+
             return {
               ...debtor,
               invoices: debtorInvoices,
@@ -93,130 +51,124 @@ const ClientInterface: React.FC = () => {
               totalAmount,
               paidAmount,
               recoveryRate,
-              lastCommunication: debtorCommunications.length > 0 
+              lastCommunication: debtorCommunications.length > 0
                 ? debtorCommunications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
                 : null
             };
           });
-          
+
           setClientDebtors(enrichedDebtors);
         }
-        
-        setIsLoading(false);
       } catch (error) {
-        console.error('Error loading client data:', error);
-        setClientDebiteurs(formattedDebiteurs);
+        console.error('Erreur lors du chargement des données client:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    
+
     loadClientData();
   }, [user, clients, debtors, invoices, payments, communications]);
 
-  // Filtrer et trier les débiteurs
-  const filteredDebiteurs = clientDebiteurs.filter(debiteur => {
-    const matchesSearch = 
-      debiteur.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (debiteur.company && debiteur.company.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      debiteur.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || debiteur.status === statusFilter;
-    
+  // Handlers
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    await refreshData();
+    setIsLoading(false);
+  };
+
+  const handleSelectDebtor = (debtor: any) => {
+    setSelectedDebtor(debtor);
+    setActiveTab('overview');
+  };
+
+  const handleBackToList = () => {
+    setSelectedDebtor(null);
+  };
+
+  const handleSendMessage = () => {
+    console.log('Message envoyé:', contactType, contactMessage);
+    setShowContactModal(false);
+    setContactMessage('');
+    setContactType(null);
+  };
+
+  // Affichage conditionnel
+  if (!clientData && !isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center h-full">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+          <p className="text-gray-500 text-lg">Aucune information client trouvée</p>
+          <p className="text-gray-400 mt-2">Veuillez contacter le support technique</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading && !clientData) {
+    return (
+      <div className="p-6 flex items-center justify-center h-full">
+        <div className="text-center">
+          <RefreshCw className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-500">Chargement des données client…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Filtres et tris
+  const filteredDebtors = clientDebtors.filter(debtor => {
+    const matchesSearch =
+      debtor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      debtor.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      debtor.email?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus = statusFilter === 'all' || debtor.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
-  const sortedDebiteurs = [...filteredDebiteurs].sort((a, b) => {
+  const sortedDebtors = [...filteredDebtors].sort((a, b) => {
     switch (sortBy) {
-      case 'daysOverdue':
-        return b.daysOverdue - a.daysOverdue;
-      case 'amount':
-        return b.totalAmount - a.totalAmount;
-      case 'name':
-        return a.name.localeCompare(b.name);
-      case 'recoveryStatus':
-        const statusOrder = { critical: 3, orange: 2, yellow: 1, blue: 0 };
-        return statusOrder[b.recoveryStatus] - statusOrder[a.recoveryStatus];
-      default:
-        return 0;
+      case 'daysOverdue': return b.daysOverdue - a.daysOverdue;
+      case 'amount': return b.totalAmount - a.totalAmount;
+      case 'name': return a.name.localeCompare(b.name);
+      case 'recoveryStatus': {
+        const order = { critical: 3, orange: 2, yellow: 1, blue: 0 };
+        return order[b.recoveryStatus] - order[a.recoveryStatus];
+      }
+      default: return 0;
     }
   });
 
-  // Calculer les statistiques globales
-  const totalDebt = clientDebtors.reduce((sum, debtor) => sum + debtor.totalAmount, 0);
-  const totalRecovered = clientDebtors.reduce((sum, debtor) => sum + debtor.paidAmount, 0);
-  const criticalDebtors = clientDebtors.filter(d => d.recoveryStatus === 'critical').length;
-  const overdueDebtors = clientDebtors.filter(d => d.daysOverdue > 0).length;
-  const recoveryRate = totalDebt > 0 ? (totalRecovered / totalDebt) * 100 : 0;
+  // Statistiques
+  const totalAmount = clientDebtors.reduce((sum, d) => sum + d.totalAmount, 0);
+  const totalPaid = clientDebtors.reduce((sum, d) => sum + d.paidAmount, 0);
+  const totalOriginal = clientDebtors.reduce((sum, d) => sum + d.originalAmount, 0);
+  const criticalCount = clientDebtors.filter(d => d.recoveryStatus === 'critical').length;
+  const recoveryRate = totalAmount > 0 ? (totalPaid / totalAmount) * 100 : 0;
 
-        // Rafraîchissement des données
-const handleRefresh = async () => {
-  setIsLoading(true);
-  await refreshData();
-  setIsLoading(false);
-};
-
-// Sélection d’un débiteur
-const handleSelectDebtor = (debtor: DebtorType) => {
-  setSelectedDebtor(debtor);
-  setActiveTab('overview');
-};
-
-// Retour à la liste
-const handleBackToList = () => {
-  setSelectedDebtor(null);
-};
-
-// Envoi de message
-const handleSendMessage = () => {
-  console.log('Message envoyé:', contactType, contactMessage);
-  setShowContactModal(false);
-  setContactMessage('');
-  setContactType(null);
-};
-
-// Aucune donnée client
-if (!clientData && !isLoading) {
+  // Rendu principal
   return (
-    <div className="p-6 flex items-center justify-center h-full">
-      <div className="text-center">
-        <AlertCircle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
-        <p className="text-gray-500 text-lg">Aucune information client trouvée</p>
-        <p className="text-gray-400 mt-2">Veuillez contacter le support technique</p>
-      </div>
+    <div className="p-6">
+      {/* Extrait de barre de progression si un débiteur est sélectionné */}
+      {selectedDebtor && (
+        <div className="mt-4">
+          <div className="flex justify-between text-xs text-gray-500 mb-1">
+            <span>Progression du recouvrement</span>
+            <span>{selectedDebtor.recoveryRate.toFixed(1)}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-1.5">
+            <div
+              className="bg-green-500 h-1.5 rounded-full"
+              style={{ width: `${selectedDebtor.recoveryRate}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
+
+      {/* Ici tu peux continuer avec les composants d’affichage de débiteurs, navigation onglets, etc. */}
     </div>
-  );
-}
-
-// Affichage pendant le chargement
-if (isLoading && !clientData) {
-  return (
-    <div className="p-6 flex items-center justify-center h-full">
-      <div className="text-center">
-        <RefreshCw className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-        <p className="text-gray-500">Chargement des données client…</p>
-      </div>
-    </div>
-  );
-}
-
-// Statistiques globales
-const totalAmount = clientDebiteurs.reduce((sum, d) => sum + d.totalAmount, 0);
-const totalPaid = clientDebiteurs.reduce((sum, d) => sum + d.paidAmount, 0);
-const totalOriginal = clientDebiteurs.reduce((sum, d) => sum + d.originalAmount, 0);
-const criticalCount = clientDebiteurs.filter(d => d.recoveryStatus === 'critical').length;
-
-// Barre de progression (à intégrer dans ton JSX principal)
-<div className="mt-4">
-  <div className="flex justify-between text-xs text-gray-500 mb-1">
-    <span>Progression du recouvrement</span>
-    <span>{selectedDebtor.recoveryRate.toFixed(1)}%</span>
-  </div>
-  <div className="w-full bg-gray-200 rounded-full h-1.5">
-    <div
-      className="bg-green-500 h-1.5 rounded-full"
-      style={{ width: `${selectedDebtor.recoveryRate}%` }}
-    ></div>
-  </div>
-</div>
-
         {/* Navigation par onglets */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="border-b border-gray-200">
