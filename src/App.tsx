@@ -9,7 +9,7 @@ import AdminDashboard from './components/Dashboard/AdminDashboard';
 import ManagerDashboard from './components/Dashboard/ManagerDashboard';
 import DebiteurDashboard from './components/Dashboard/DebiteurDashboard';
 import UserManagement from './components/Management/UserManagement';
-import DebiteurPortfolio from './components/Management/DebiteurPortfolio';
+import DebiteurPortfolio from './components/Management/DebiteurPortfolio.tsx';
 import SystemConfiguration from './components/Management/SystemConfiguration';
 import ReportsAnalytics from './components/Management/ReportsAnalytics';
 import SystemMonitoring from './components/Management/SystemMonitoring';
