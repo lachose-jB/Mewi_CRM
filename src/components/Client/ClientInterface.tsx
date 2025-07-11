@@ -145,25 +145,25 @@ const ClientInterface: React.FC = () => {
   const criticalDebtors = clientDebtors.filter(d => d.recoveryStatus === 'critical').length;
   const overdueDebtors = clientDebtors.filter(d => d.daysOverdue > 0).length;
   const recoveryRate = totalDebt > 0 ? (totalRecovered / totalDebt) * 100 : 0;
-// Gérer le rafraîchissement des données
+// Rafraîchissement des données
 const handleRefresh = async () => {
   setIsLoading(true);
   await refreshData();
   setIsLoading(false);
 };
 
-// Gérer la sélection d'un débiteur
-const handleSelectDebtor = (debtor: any) => {
+// Sélection d’un débiteur
+const handleSelectDebtor = (debtor: DebtorType) => {
   setSelectedDebtor(debtor);
   setActiveTab('overview');
 };
 
-// Gérer le retour à la liste des débiteurs
+// Retour à la liste
 const handleBackToList = () => {
   setSelectedDebtor(null);
 };
 
-// Gérer l'envoi d'un message au gestionnaire
+// Envoi de message
 const handleSendMessage = () => {
   console.log('Message envoyé:', contactType, contactMessage);
   setShowContactModal(false);
@@ -171,7 +171,7 @@ const handleSendMessage = () => {
   setContactType(null);
 };
 
-// Si aucun client n'est trouvé
+// Aucune donnée client
 if (!clientData && !isLoading) {
   return (
     <div className="p-6 flex items-center justify-center h-full">
@@ -196,173 +196,26 @@ if (isLoading && !clientData) {
   );
 }
 
-// Calculs des statistiques globales
+// Statistiques globales
 const totalAmount = clientDebiteurs.reduce((sum, d) => sum + d.totalAmount, 0);
 const totalPaid = clientDebiteurs.reduce((sum, d) => sum + d.paidAmount, 0);
 const totalOriginal = clientDebiteurs.reduce((sum, d) => sum + d.originalAmount, 0);
 const criticalCount = clientDebiteurs.filter(d => d.recoveryStatus === 'critical').length;
 
+// Barre de progression (à intégrer dans ton JSX principal)
+<div className="mt-4">
+  <div className="flex justify-between text-xs text-gray-500 mb-1">
+    <span>Progression du recouvrement</span>
+    <span>{selectedDebtor.recoveryRate.toFixed(1)}%</span>
+  </div>
+  <div className="w-full bg-gray-200 rounded-full h-1.5">
+    <div
+      className="bg-green-500 h-1.5 rounded-full"
+      style={{ width: `${selectedDebtor.recoveryRate}%` }}
+    ></div>
+  </div>
+</div>
 
-
-          
-          {/* Barre de progression */}
-          <div className="mt-4">
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
-              <span>Progression du recouvrement</span>
-              <span>{selectedDebtor.recoveryRate.toFixed(1)}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-1.5">
-              <div 
-                className="bg-green-500 h-1.5 rounded-full" 
-                style={{ width: `${selectedDebtor.recoveryRate}%` }}
-              ></div>
-            </div>
-          </div>
-
-        {/* Navigation par onglets */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-6 px-6">
-              <button
-                onClick={() => setActiveTab('overview')}
-                className={`py-4 px-2 border-b-2 font-medium text-sm ${
-                  activeTab === 'overview'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Vue d'ensemble
-              </button>
-              <button
-                onClick={() => setActiveTab('invoices')}
-                className={`py-4 px-2 border-b-2 font-medium text-sm ${
-                  activeTab === 'invoices'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Factures
-              </button>
-              <button
-                onClick={() => setActiveTab('communications')}
-                className={`py-4 px-2 border-b-2 font-medium text-sm ${
-                  activeTab === 'communications'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Communications
-              </button>
-              <button
-                onClick={() => setActiveTab('actions')}
-                className={`py-4 px-2 border-b-2 font-medium text-sm ${
-                  activeTab === 'actions'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Actions
-              </button>
-            </nav>
-          </div>
-
-          <div className="p-6">
-            {/* Onglet Vue d'ensemble */}
-            {activeTab === 'overview' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Informations de contact */}
-                  <div className="bg-white rounded-lg border border-gray-200 p-5">
-                    <h4 className="font-medium text-gray-900 mb-4">Informations de contact</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-start">
-                        <User className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-                        <div>
-                          <p className="font-medium text-gray-900">{selectedDebtor.name}</p>
-                          <p className="text-sm text-gray-600">{selectedDebtor.type === 'company' ? 'Entreprise' : 'Particulier'}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-start">
-                        <Mail className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-                        <div>
-                          <p className="font-medium text-gray-900">{selectedDebtor.email}</p>
-                          <p className="text-sm text-gray-600">Email</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-start">
-                        <Phone className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-                        <div>
-                          <p className="font-medium text-gray-900">{selectedDebtor.phone}</p>
-                          <p className="text-sm text-gray-600">Téléphone</p>
-                        </div>
-                      </div>
-                      
-                      {selectedDebtor.company && (
-                        <div className="flex items-start">
-                          <Building className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-                          <div>
-                            <p className="font-medium text-gray-900">{selectedDebtor.company}</p>
-                            <p className="text-sm text-gray-600">Entreprise</p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className="flex items-start">
-                        <MapPin className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-                        <div>
-                          <p className="font-medium text-gray-900">{selectedDebtor.address}</p>
-                          <p className="text-sm text-gray-600">Adresse</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Détails financiers */}
-                  <div className="bg-white rounded-lg border border-gray-200 p-5">
-                    <h4 className="font-medium text-gray-900 mb-4">Détails financiers</h4>
-                    <div className="space-y-3">
-                      <div className="flex justify-between border-b border-gray-100 pb-2">
-                        <span className="text-gray-600">Montant original</span>
-                        <span className="font-medium text-gray-900">{formatCurrency(selectedDebtor.originalAmount)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between border-b border-gray-100 pb-2">
-                        <span className="text-gray-600">Montant recouvré</span>
-                        <span className="font-medium text-green-600">{formatCurrency(selectedDebtor.paidAmount)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between border-b border-gray-100 pb-2">
-                        <span className="text-gray-600">Reste à recouvrer</span>
-                        <span className="font-medium text-gray-900">{formatCurrency(selectedDebtor.totalAmount)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between border-b border-gray-100 pb-2">
-                        <span className="text-gray-600">Nombre de factures</span>
-                        <span className="font-medium text-gray-900">{selectedDebtor.invoices.length}</span>
-                      </div>
-                      
-                      <div className="flex justify-between border-b border-gray-100 pb-2">
-                        <span className="text-gray-600">Jours de retard</span>
-                        <span className={`font-medium ${
-                          selectedDebtor.daysOverdue > 30 ? 'text-red-600' : 
-                          selectedDebtor.daysOverdue > 15 ? 'text-orange-600' : 
-                          selectedDebtor.daysOverdue > 0 ? 'text-yellow-600' : 'text-gray-900'
-                        }`}>
-                          {selectedDebtor.daysOverdue}
-                        </span>
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Dernier paiement</span>
-                        <span className="font-medium text-gray-900">
-                          {selectedDebtor.lastPayment ? new Date(selectedDebtor.lastPayment).toLocaleDateString('fr-FR') : 'Aucun'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
                 
                 {/* Factures récentes */}
                 <div className="bg-white rounded-lg border border-gray-200 p-5">
