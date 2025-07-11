@@ -15,6 +15,7 @@ import ReportsAnalytics from './components/Management/ReportsAnalytics';
 import SystemMonitoring from './components/Management/SystemMonitoring';
 import BackupRestore from './components/Management/BackupRestore';
 import DossierDetails from './components/Debiteur/DossierDetails';
+import ClientInterface from './components/Client/ClientInterface';
 import InvoicesPage from './components/Debiteur/InvoicesPage';
 import PaymentsPage from './components/Debiteur/PaymentsPage';
 import HistoryPage from './components/Debiteur/HistoryPage';
@@ -85,6 +86,18 @@ const AppContent: React.FC = () => {
         default: return <DebiteurDashboard />;
       }
     }
+    
+    // Contenu pour Client
+    if (user.role === 'client') {
+      switch (activeTab) {
+        case 'dashboard': return <ClientInterface />;
+        case 'debtors': return <ClientInterface />;
+        case 'invoices': return <InvoicesPage />;
+        case 'payments': return <PaymentsPage />;
+        case 'history': return <HistoryPage />;
+        default: return <ClientInterface />;
+      }
+    }
 
     return <div className="p-6"><h1 className="text-2xl font-bold">Accès non autorisé</h1></div>;
   };
@@ -95,11 +108,7 @@ const AppContent: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto">
-          {user?.role === 'debiteur' && activeTab === 'dashboard' ? (
-            <DebiteurDashboard />
-          ) : (
-            renderContent()
-          )}
+          {renderContent()}
         </main>
       </div>
     </div>

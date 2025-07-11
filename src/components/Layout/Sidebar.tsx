@@ -62,6 +62,14 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
           { id: 'payments', label: 'Paiements', icon: CreditCard },
           { id: 'history', label: 'Historique Complet', icon: History }
         ];
+      case 'client':
+        return [
+          { id: 'dashboard', label: 'Tableau de bord', icon: BarChart3 },
+          { id: 'debtors', label: 'Mes Débiteurs', icon: Users },
+          { id: 'invoices', label: 'Factures', icon: FileText },
+          { id: 'payments', label: 'Paiements', icon: CreditCard },
+          { id: 'history', label: 'Historique', icon: History }
+        ];
       case 'debiteur':
         return [
           { id: 'dashboard', label: 'Vue d\'ensemble', icon: UserCheck },
