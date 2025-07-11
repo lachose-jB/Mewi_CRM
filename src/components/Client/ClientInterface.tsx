@@ -218,7 +218,6 @@ const criticalCount = clientDebiteurs.filter(d => d.recoveryStatus === 'critical
               ></div>
             </div>
           </div>
-        </div>
 
         {/* Navigation par onglets */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
