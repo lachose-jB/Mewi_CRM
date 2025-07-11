@@ -7,17 +7,17 @@ import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import AdminDashboard from './components/Dashboard/AdminDashboard';
 import ManagerDashboard from './components/Dashboard/ManagerDashboard';
-import ClientDashboard from './components/Dashboard/ClientDashboard';
+import DebiteurDashboard from './components/Dashboard/DebiteurDashboard';
 import UserManagement from './components/Management/UserManagement';
-import ClientPortfolio from './components/Management/ClientPortfolio';
+import DebiteurPortfolio from './components/Management/DebiteurPortfolio';
 import SystemConfiguration from './components/Management/SystemConfiguration';
 import ReportsAnalytics from './components/Management/ReportsAnalytics';
 import SystemMonitoring from './components/Management/SystemMonitoring';
 import BackupRestore from './components/Management/BackupRestore';
-import DossierDetails from './components/Client/DossierDetails';
-import InvoicesPage from './components/Client/InvoicesPage';
-import PaymentsPage from './components/Client/PaymentsPage';
-import HistoryPage from './components/Client/HistoryPage';
+import DossierDetails from './components/Debiteur/DossierDetails';
+import InvoicesPage from './components/Debiteur/InvoicesPage';
+import PaymentsPage from './components/Debiteur/PaymentsPage';
+import HistoryPage from './components/Debiteur/HistoryPage';
 import CalendarRelances from './components/Management/CalendarRelances';
 import CommunicationsManager from './components/Management/CommunicationsManager';
 
@@ -53,7 +53,7 @@ const AppContent: React.FC = () => {
       switch (activeTab) {
         case 'dashboard': return <AdminDashboard />;
         case 'users': return <UserManagement />;
-        case 'clients': return <ClientPortfolio />;
+        case 'debiteurs': return <DebiteurPortfolio />;
         case 'config': return <SystemConfiguration />;
         case 'reports': return <ReportsAnalytics />;
         case 'monitoring': return <SystemMonitoring />;
@@ -66,7 +66,7 @@ const AppContent: React.FC = () => {
     if (user.role === 'manager') {
       switch (activeTab) {
         case 'dashboard': return <ManagerDashboard />;
-        case 'portfolio': return <ClientPortfolio />;
+        case 'portfolio': return <DebiteurPortfolio />;
         case 'communications': return <CommunicationsManager />;
         case 'calendar': return <CalendarRelances userId={user.id} userRole={user.role} />;
         case 'calls': return <div className="p-6"><h1 className="text-2xl font-bold">Gestion des Appels</h1><p className="text-gray-600">Module d'appels en développement...</p></div>;
@@ -74,15 +74,15 @@ const AppContent: React.FC = () => {
       }
     }
     
-    // Contenu pour Client
-    if (user.role === 'client') {
+    // Contenu pour Debiteur
+    if (user.role === 'debiteur') {
       switch (activeTab) {
-        case 'dashboard': return <ClientDashboard />;
+        case 'dashboard': return <DebiteurDashboard />;
         case 'dossier': return <DossierDetails />;
         case 'invoices': return <InvoicesPage />;
         case 'payments': return <PaymentsPage />;
         case 'history': return <HistoryPage />;
-        default: return <ClientDashboard />;
+        default: return <DebiteurDashboard />;
       }
     }
 
@@ -95,8 +95,8 @@ const AppContent: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto">
-          {user?.role === 'debiteur' ? (
-            <ClientDashboard />
+          {user?.role === 'debiteur' && activeTab === 'dashboard' ? (
+            <DebiteurDashboard />
           ) : (
             renderContent()
           )}

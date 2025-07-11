@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import AccountSettings from '../Management/AccountSettings';
-import UserAccountSettings from '../Management/UserAccountSettings';
+import DebiteurAccountSettings from '../Management/DebiteurAccountSettings';
 import ManagerAccountSettings from '../Management/ManagerAccountSettings';
 
 interface SidebarProps {
@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
           { id: 'calendar', label: 'Agenda', icon: Calendar },
           { id: 'calls', label: 'Appels', icon: Phone }
         ];
-      case 'client':
+      case 'debiteur':
         return [
           { id: 'dashboard', label: 'Vue d\'ensemble', icon: UserCheck },
           { id: 'dossier', label: 'Mon Dossier Détaillé', icon: Eye },
@@ -99,9 +99,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
             onClose={() => setShowSettings(false)}
           />
         );
-      case 'client':
+      case 'debiteur':
         return (
-          <UserAccountSettings
+          <DebiteurAccountSettings
             isOpen={showSettings}
             onClose={() => setShowSettings(false)}
           />

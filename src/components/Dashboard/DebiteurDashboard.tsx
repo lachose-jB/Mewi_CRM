@@ -74,7 +74,7 @@ const DebiteurDashboard: React.FC = () => {
           communications: debiteurCommunications
         });
       } catch (error) {
-        console.error('Error refreshing  Débiteur details:', error);
+        console.error('Error refreshing Débiteur details:', error);
       }
     }
     

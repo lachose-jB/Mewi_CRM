@@ -14,7 +14,7 @@ const Header: React.FC = () => {
       case 'admin': return 'Administrateur';
       case 'manager': return 'Gestionnaire';
       case 'client': return 'Client'; // <-- Utilisateur qui confie ses débiteurs
-      case 'debiteur': return 'Débiteur'; // <-- Nouveau rôle pour débiteur
+      case 'debiteur': return 'Débiteur'; // <-- Débiteur
       default: return role;
     }
   };
