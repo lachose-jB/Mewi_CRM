@@ -1,0 +1,1082 @@
+{
+  "users": [
+    {
+      "id": "admin1",
+      "email": "admin@crm.com",
+      "name": "Admin Principal",
+      "role": "admin",
+      "isActive": true,
+      "createdAt": "2024-01-01T10:00:00Z",
+      "lastLogin": "2024-12-15T14:30:00Z",
+      "phone": "+33 1 23 45 67 89",
+      "jobTitle": "Administrateur Système",
+      "department": "Direction",
+      "employeeId": "ADM-2024-001"
+    },
+    {
+      "id": "manager1",
+      "email": "gestionnaire@crm.com",
+      "name": "Marie Dubois",
+      "role": "manager",
+      "isActive": true,
+      "createdAt": "2024-01-15T09:00:00Z",
+      "lastLogin": "2024-12-15T09:15:00Z",
+      "phone": "+33 1 98 76 54 32",
+      "jobTitle": "Gestionnaire de Recouvrement",
+      "department": "Service Recouvrement",
+      "employeeId": "GR-2024-001",
+      "specializations": ["Grands comptes", "Secteur bancaire"],
+      "maxCaseload": 50,
+      "performance": {
+        "recoveryRate": 87,
+        "recoveredAmount": 456789,
+        "activeFiles": 234
+      }
+    },
+    {
+      "id": "manager2",
+      "email": "gestionnaire2@crm.com",
+      "name": "Pierre Martin",
+      "role": "manager",
+      "isActive": true,
+      "createdAt": "2024-02-01T08:30:00Z",
+      "lastLogin": "2024-12-14T16:45:00Z",
+      "phone": "+33 1 45 67 89 01",
+      "jobTitle": "Gestionnaire de Recouvrement",
+      "department": "Service Recouvrement",
+      "employeeId": "GR-2024-002",
+      "specializations": ["PME", "Secteur industriel"],
+      "maxCaseload": 45,
+      "performance": {
+        "recoveryRate": 76,
+        "recoveredAmount": 398765,
+        "activeFiles": 198
+      }
+    },
+    {
+      "id": "manager3",
+      "email": "gestionnaire3@crm.com",
+      "name": "Sophie Leroy",
+      "role": "manager",
+      "isActive": true,
+      "createdAt": "2024-02-15T10:15:00Z",
+      "lastLogin": "2024-12-15T11:30:00Z",
+      "phone": "+33 1 23 45 67 89",
+      "jobTitle": "Gestionnaire de Recouvrement Senior",
+      "department": "Service Recouvrement",
+      "employeeId": "GR-2024-003",
+      "specializations": ["Contentieux", "Grands comptes"],
+      "maxCaseload": 40,
+      "performance": {
+        "recoveryRate": 92,
+        "recoveredAmount": 512345,
+        "activeFiles": 267
+      }
+    },
+    {
+      "id": "manager4",
+      "email": "gestionnaire4@crm.com",
+      "name": "Jean Robert",
+      "role": "manager",
+      "isActive": false,
+      "createdAt": "2024-03-01T09:45:00Z",
+      "lastLogin": "2024-11-30T10:20:00Z",
+      "phone": "+33 1 78 90 12 34",
+      "jobTitle": "Gestionnaire de Recouvrement",
+      "department": "Service Recouvrement",
+      "employeeId": "GR-2024-004",
+      "specializations": ["TPE", "Artisans"],
+      "maxCaseload": 60,
+      "performance": {
+        "recoveryRate": 68,
+        "recoveredAmount": 334567,
+        "activeFiles": 189
+      }
+    },
+    {
+      "id": "client1",
+      "email": "client@example.com",
+      "name": "Jean Martin",
+      "role": "client",
+      "isActive": true,
+      "createdAt": "2024-02-15T14:00:00Z",
+      "lastLogin": "2024-12-14T10:30:00Z",
+      "phone": "+33 1 23 45 67 89",
+      "company": "Martin SARL",
+      "address": "123 Rue de la Paix, 75001 Paris"
+    }
+  ],
+  "clients": [
+    {
+      "id": "1",
+      "user_id": "client1",
+      "name": "Jean Martin",
+      "email": "jean.martin@example.com",
+      "phone": "+33 1 23 45 67 89",
+      "address": "123 Rue de la Paix, 75001 Paris",
+      "company": "Martin SARL",
+      "manager_id": "manager1",
+      "status": "critical",
+      "total_amount": 15750.50,
+      "notes": ["Client difficile à joindre", "Promesse de règlement au 15/12"],
+      "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-12-15T10:00:00Z",
+      "last_contact": "2024-12-10T14:30:00Z",
+      "debtorType": "company",
+      "siret": "12345678901234",
+      "tva": "FR12345678901",
+      "legalForm": "SARL",
+      "contactName": "Jean Martin",
+      "contactRole": "Gérant",
+      "contactMobile": "+33 6 12 34 56 78",
+      "accountingContact": "Sophie Dupont",
+      "accountingEmail": "comptabilite@martin-sarl.fr",
+      "accountingPhone": "+33 1 23 45 67 90",
+      "paymentTerms": "30 jours",
+      "creditLimit": 20000,
+      "riskLevel": "high"
+    },
+    {
+      "id": "2",
+      "name": "Sophie Leroy",
+      "email": "sophie.leroy@company.com",
+      "phone": "+33 1 98 76 54 32",
+      "address": "456 Avenue des Champs, 69000 Lyon",
+      "company": "Leroy & Associés",
+      "manager_id": "manager1",
+      "status": "orange",
+      "total_amount": 8200.00,
+      "notes": ["Bon payeur habituellement"],
+      "created_at": "2024-02-20T09:00:00Z",
+      "updated_at": "2024-12-15T09:00:00Z",
+      "last_contact": "2024-12-05T11:15:00Z",
+      "debtorType": "company",
+      "siret": "98765432109876",
+      "tva": "FR98765432109",
+      "legalForm": "SAS",
+      "contactName": "Sophie Leroy",
+      "contactRole": "Directrice",
+      "contactMobile": "+33 6 98 76 54 32",
+      "accountingContact": "Marc Blanc",
+      "accountingEmail": "comptabilite@leroy-associes.fr",
+      "accountingPhone": "+33 4 78 90 12 34",
+      "paymentTerms": "45 jours",
+      "creditLimit": 15000,
+      "riskLevel": "medium"
+    },
+    {
+      "id": "3",
+      "name": "Pierre Dubois",
+      "email": "pierre.dubois@gmail.com",
+      "phone": "+33 6 12 34 56 78",
+      "address": "789 Boulevard Saint-Michel, 75006 Paris",
+      "manager_id": "manager2",
+      "status": "critical",
+      "total_amount": 12300.00,
+      "notes": ["Dossier transmis au service juridique", "Contestation de facture"],
+      "created_at": "2024-03-10T11:30:00Z",
+      "updated_at": "2024-12-14T16:45:00Z",
+      "last_contact": "2024-12-12T09:30:00Z",
+      "debtorType": "individual",
+      "cin": "123456789012",
+      "birthDate": "1975-05-15",
+      "nationality": "Française",
+      "secondaryAddress": "45 Rue du Commerce, 75015 Paris",
+      "employerName": "Société Générale",
+      "employerAddress": "29 Boulevard Haussmann, 75009 Paris",
+      "bankName": "BNP Paribas",
+      "iban": "FR76XXXXXXXXXXXXXXXXXXXXX",
+      "riskLevel": "extreme"
+    },
+    {
+      "id": "4",
+      "name": "Martin SA",
+      "email": "contact@martin-sa.fr",
+      "phone": "+33 1 45 67 89 01",
+      "address": "12 Rue de l'Industrie, 69100 Villeurbanne",
+      "company": "Martin SA",
+      "manager_id": "manager2",
+      "status": "yellow",
+      "total_amount": 5400.00,
+      "notes": ["Négociation en cours pour échéancier"],
+      "created_at": "2024-03-15T14:00:00Z",
+      "updated_at": "2024-12-13T10:15:00Z",
+      "last_contact": "2024-12-13T10:15:00Z",
+      "debtorType": "company",
+      "siret": "45678901234567",
+      "tva": "FR45678901234",
+      "legalForm": "SA",
+      "contactName": "Philippe Martin",
+      "contactRole": "Directeur Financier",
+      "contactMobile": "+33 6 45 67 89 01",
+      "accountingContact": "Julie Blanc",
+      "accountingEmail": "comptabilite@martin-sa.fr",
+      "accountingPhone": "+33 1 45 67 89 02",
+      "paymentTerms": "60 jours",
+      "creditLimit": 25000,
+      "riskLevel": "medium"
+    },
+    {
+      "id": "5",
+      "name": "Entreprise ABC",
+      "email": "contact@entreprise-abc.com",
+      "phone": "+33 1 23 45 67 89",
+      "address": "123 Avenue de la République, 75011 Paris",
+      "company": "Entreprise ABC",
+      "manager_id": "manager3",
+      "status": "blue",
+      "total_amount": 3200.00,
+      "notes": ["Client régulier"],
+      "created_at": "2024-04-01T09:30:00Z",
+      "updated_at": "2024-12-10T14:00:00Z",
+      "last_contact": "2024-12-10T14:00:00Z",
+      "debtorType": "company",
+      "siret": "56789012345678",
+      "tva": "FR56789012345",
+      "legalForm": "SARL",
+      "contactName": "Marie Durand",
+      "contactRole": "Gérante",
+      "contactMobile": "+33 6 23 45 67 89",
+      "accountingContact": "Paul Noir",
+      "accountingEmail": "comptabilite@entreprise-abc.com",
+      "accountingPhone": "+33 1 23 45 67 80",
+      "paymentTerms": "30 jours",
+      "creditLimit": 10000,
+      "riskLevel": "low"
+    },
+    {
+      "id": "6",
+      "name": "Société XYZ",
+      "email": "contact@societe-xyz.fr",
+      "phone": "+33 1 34 56 78 90",
+      "address": "456 Rue du Commerce, 33000 Bordeaux",
+      "company": "Société XYZ",
+      "manager_id": "manager3",
+      "status": "orange",
+      "total_amount": 9800.00,
+      "notes": ["Difficultés financières connues", "Plan de redressement en cours"],
+      "created_at": "2024-04-15T11:00:00Z",
+      "updated_at": "2024-12-12T15:30:00Z",
+      "last_contact": "2024-12-12T15:30:00Z",
+      "debtorType": "company",
+      "siret": "67890123456789",
+      "tva": "FR67890123456",
+      "legalForm": "SAS",
+      "contactName": "Thomas Petit",
+      "contactRole": "Directeur Général",
+      "contactMobile": "+33 6 34 56 78 90",
+      "accountingContact": "Lucie Grand",
+      "accountingEmail": "comptabilite@societe-xyz.fr",
+      "accountingPhone": "+33 1 34 56 78 91",
+      "paymentTerms": "45 jours",
+      "creditLimit": 15000,
+      "riskLevel": "high"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "inv1",
+      "client_id": "1",
+      "invoice_number": "FAC-2024-001",
+      "amount": 8750.50,
+      "original_amount": 8750.50,
+      "paid_amount": 0,
+      "due_date": "2024-11-15",
+      "issue_date": "2024-10-15",
+      "status": "overdue",
+      "description": "Prestations de conseil - Novembre 2024",
+      "category": "Conseil",
+      "created_at": "2024-10-15T10:00:00Z",
+      "updated_at": "2024-12-15T10:00:00Z"
+    },
+    {
+      "id": "inv2",
+      "client_id": "1",
+      "invoice_number": "FAC-2024-002",
+      "amount": 4500.00,
+      "original_amount": 7000.00,
+      "paid_amount": 2500.00,
+      "due_date": "2024-12-01",
+      "issue_date": "2024-11-01",
+      "status": "partial",
+      "description": "Services de maintenance - Décembre 2024",
+      "category": "Maintenance",
+      "created_at": "2024-11-01T10:00:00Z",
+      "updated_at": "2024-12-15T10:00:00Z"
+    },
+    {
+      "id": "inv3",
+      "client_id": "1",
+      "invoice_number": "FAC-2024-003",
+      "amount": 2500.00,
+      "original_amount": 2500.00,
+      "paid_amount": 0,
+      "due_date": "2024-12-31",
+      "issue_date": "2024-12-01",
+      "status": "pending",
+      "description": "Formation équipe - Décembre 2024",
+      "category": "Formation",
+      "created_at": "2024-12-01T10:00:00Z",
+      "updated_at": "2024-12-01T10:00:00Z"
+    },
+    {
+      "id": "inv4",
+      "client_id": "2",
+      "invoice_number": "FAC-2024-004",
+      "amount": 5200.00,
+      "original_amount": 5200.00,
+      "paid_amount": 0,
+      "due_date": "2024-12-15",
+      "issue_date": "2024-11-15",
+      "status": "overdue",
+      "description": "Développement logiciel - Phase 1",
+      "category": "Développement",
+      "created_at": "2024-11-15T09:00:00Z",
+      "updated_at": "2024-12-15T09:00:00Z"
+    },
+    {
+      "id": "inv5",
+      "client_id": "2",
+      "invoice_number": "FAC-2024-005",
+      "amount": 3000.00,
+      "original_amount": 3000.00,
+      "paid_amount": 0,
+      "due_date": "2024-12-31",
+      "issue_date": "2024-12-01",
+      "status": "pending",
+      "description": "Développement logiciel - Phase 2",
+      "category": "Développement",
+      "created_at": "2024-12-01T09:00:00Z",
+      "updated_at": "2024-12-01T09:00:00Z"
+    },
+    {
+      "id": "inv6",
+      "client_id": "3",
+      "invoice_number": "FAC-2024-006",
+      "amount": 12300.00,
+      "original_amount": 12300.00,
+      "paid_amount": 0,
+      "due_date": "2024-11-30",
+      "issue_date": "2024-10-30",
+      "status": "overdue",
+      "description": "Prestation complète - Novembre 2024",
+      "category": "Service",
+      "created_at": "2024-10-30T11:30:00Z",
+      "updated_at": "2024-12-14T16:45:00Z"
+    },
+    {
+      "id": "inv7",
+      "client_id": "4",
+      "invoice_number": "FAC-2024-007",
+      "amount": 5400.00,
+      "original_amount": 5400.00,
+      "paid_amount": 0,
+      "due_date": "2024-12-20",
+      "issue_date": "2024-11-20",
+      "status": "pending",
+      "description": "Fourniture matériel informatique",
+      "category": "Matériel",
+      "created_at": "2024-11-20T14:00:00Z",
+      "updated_at": "2024-11-20T14:00:00Z"
+    },
+    {
+      "id": "inv8",
+      "client_id": "5",
+      "invoice_number": "FAC-2024-008",
+      "amount": 0.00,
+      "original_amount": 3200.00,
+      "paid_amount": 3200.00,
+      "due_date": "2024-11-30",
+      "issue_date": "2024-10-30",
+      "status": "paid",
+      "description": "Maintenance annuelle",
+      "category": "Maintenance",
+      "created_at": "2024-10-30T09:30:00Z",
+      "updated_at": "2024-12-10T14:00:00Z"
+    },
+    {
+      "id": "inv9",
+      "client_id": "6",
+      "invoice_number": "FAC-2024-009",
+      "amount": 9800.00,
+      "original_amount": 9800.00,
+      "paid_amount": 0,
+      "due_date": "2024-11-15",
+      "issue_date": "2024-10-15",
+      "status": "overdue",
+      "description": "Refonte site web",
+      "category": "Développement",
+      "created_at": "2024-10-15T11:00:00Z",
+      "updated_at": "2024-12-12T15:30:00Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay1",
+      "client_id": "1",
+      "invoice_id": "inv2",
+      "amount": 2500.00,
+      "payment_date": "2024-12-10T10:00:00Z",
+      "method": "Virement bancaire",
+      "reference": "VIR-20241210-001",
+      "status": "completed",
+      "notes": "Paiement partiel reçu",
+      "created_at": "2024-12-10T10:00:00Z",
+      "updated_at": "2024-12-10T10:00:00Z"
+    },
+    {
+      "id": "pay2",
+      "client_id": "5",
+      "invoice_id": "inv8",
+      "amount": 3200.00,
+      "payment_date": "2024-12-05T14:30:00Z",
+      "method": "Carte bancaire",
+      "reference": "CB-20241205-001",
+      "status": "completed",
+      "notes": "Paiement complet",
+      "created_at": "2024-12-05T14:30:00Z",
+      "updated_at": "2024-12-05T14:30:00Z"
+    },
+    {
+      "id": "pay3",
+      "client_id": "1",
+      "invoice_id": "inv1",
+      "amount": 3000.00,
+      "payment_date": "2024-12-20T00:00:00Z",
+      "due_date": "2024-12-20",
+      "method": "Prélèvement SEPA",
+      "status": "scheduled",
+      "notes": "Premier versement échéancier",
+      "created_at": "2024-12-15T09:00:00Z",
+      "updated_at": "2024-12-15T09:00:00Z"
+    },
+    {
+      "id": "pay4",
+      "client_id": "2",
+      "invoice_id": "inv4",
+      "amount": 2600.00,
+      "payment_date": "2024-12-18T00:00:00Z",
+      "due_date": "2024-12-18",
+      "method": "Virement bancaire",
+      "status": "scheduled",
+      "notes": "Premier versement",
+      "created_at": "2024-12-15T11:30:00Z",
+      "updated_at": "2024-12-15T11:30:00Z"
+    }
+  ],
+  "communications": [
+    {
+      "id": "comm1",
+      "client_id": "1",
+      "user_id": "manager1",
+      "type": "email",
+      "subject": "Relance facture FAC-2024-001",
+      "content": "Bonjour Monsieur Martin,\n\nNous vous rappelons que votre facture FAC-2024-001 d'un montant de 8750,50€ est échue depuis 30 jours.\n\nMerci de procéder au règlement dans les plus brefs délais.\n\nCordialement,\nMarie Dubois\nService Recouvrement",
+      "status": "delivered",
+      "sent_at": "2024-12-14T14:00:00Z",
+      "created_at": "2024-12-14T14:00:00Z"
+    },
+    {
+      "id": "comm2",
+      "client_id": "1",
+      "user_id": "manager1",
+      "type": "call",
+      "subject": "Suivi relance",
+      "content": "Client contacté par téléphone. Promesse de paiement pour le 20/12 (3000€) et mise en place d'un échéancier pour le solde.",
+      "status": "responded",
+      "sent_at": "2024-12-15T10:30:00Z",
+      "created_at": "2024-12-15T10:30:00Z"
+    },
+    {
+      "id": "comm3",
+      "client_id": "2",
+      "user_id": "manager1",
+      "type": "email",
+      "subject": "Relance facture FAC-2024-004",
+      "content": "Bonjour Madame Leroy,\n\nNous vous rappelons que votre facture FAC-2024-004 d'un montant de 5200€ est arrivée à échéance.\n\nMerci de procéder au règlement dans les plus brefs délais.\n\nCordialement,\nMarie Dubois\nService Recouvrement",
+      "status": "read",
+      "sent_at": "2024-12-15T09:00:00Z",
+      "created_at": "2024-12-15T09:00:00Z"
+    },
+    {
+      "id": "comm4",
+      "client_id": "3",
+      "user_id": "manager2",
+      "type": "letter",
+      "subject": "Mise en demeure",
+      "content": "Mise en demeure envoyée par courrier recommandé avec AR concernant la facture FAC-2024-006.",
+      "status": "sent",
+      "sent_at": "2024-12-14T11:00:00Z",
+      "created_at": "2024-12-14T11:00:00Z"
+    },
+    {
+      "id": "comm5",
+      "client_id": "6",
+      "user_id": "manager3",
+      "type": "sms",
+      "content": "Rappel: Votre facture FAC-2024-009 de 9800€ est en retard de paiement. Contactez-nous au 01.23.45.67.89",
+      "status": "delivered",
+      "sent_at": "2024-12-15T08:30:00Z",
+      "created_at": "2024-12-15T08:30:00Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Appeler Jean Martin",
+      "description": "Relance pour la facture #FAC-2024-001 en retard de 15 jours",
+      "dueDate": "2024-12-16",
+      "dueTime": "09:00",
+      "priority": "urgent",
+      "status": "pending",
+      "type": "call",
+      "clientId": "1",
+      "clientName": "Jean Martin",
+      "assignedTo": "manager1",
+      "createdAt": "2024-12-15T08:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Envoyer email de relance",
+      "description": "Seconde relance pour la facture #FAC-2024-002",
+      "dueDate": "2024-12-16",
+      "dueTime": "10:30",
+      "priority": "high",
+      "status": "pending",
+      "type": "email",
+      "clientId": "2",
+      "clientName": "Sophie Leroy",
+      "assignedTo": "manager1",
+      "createdAt": "2024-12-15T08:15:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Vérifier paiement reçu",
+      "description": "Confirmer le paiement de 2500€ pour la facture #FAC-2024-003",
+      "dueDate": "2024-12-16",
+      "dueTime": "14:00",
+      "priority": "medium",
+      "status": "pending",
+      "type": "follow_up",
+      "clientId": "3",
+      "clientName": "Pierre Dubois",
+      "assignedTo": "manager2",
+      "createdAt": "2024-12-15T09:00:00Z"
+    },
+    {
+      "id": "4",
+      "title": "Rendez-vous client",
+      "description": "Discussion sur l'échéancier de paiement",
+      "dueDate": "2024-12-17",
+      "dueTime": "11:00",
+      "priority": "high",
+      "status": "pending",
+      "type": "meeting",
+      "clientId": "1",
+      "clientName": "Jean Martin",
+      "assignedTo": "manager1",
+      "createdAt": "2024-12-15T10:30:00Z"
+    },
+    {
+      "id": "5",
+      "title": "Envoyer SMS de rappel",
+      "description": "Rappel de l'échéance de demain",
+      "dueDate": "2024-12-17",
+      "dueTime": "09:00",
+      "priority": "medium",
+      "status": "pending",
+      "type": "sms",
+      "clientId": "2",
+      "clientName": "Sophie Leroy",
+      "assignedTo": "manager1",
+      "createdAt": "2024-12-15T11:00:00Z"
+    },
+    {
+      "id": "6",
+      "title": "Préparer dossier contentieux",
+      "description": "Rassembler les documents pour le service juridique",
+      "dueDate": "2024-12-18",
+      "dueTime": "16:00",
+      "priority": "high",
+      "status": "pending",
+      "type": "other",
+      "clientId": "4",
+      "clientName": "Martin SA",
+      "assignedTo": "manager2",
+      "createdAt": "2024-12-15T14:00:00Z"
+    },
+    {
+      "id": "7",
+      "title": "Appel de suivi",
+      "description": "Vérifier la satisfaction client après le dernier paiement",
+      "dueDate": "2024-12-15",
+      "dueTime": "11:00",
+      "priority": "low",
+      "status": "completed",
+      "type": "call",
+      "clientId": "5",
+      "clientName": "Entreprise ABC",
+      "assignedTo": "manager3",
+      "createdAt": "2024-12-14T09:00:00Z",
+      "completedAt": "2024-12-15T11:15:00Z",
+      "outcome": "Client satisfait, prochain paiement prévu le 30/12"
+    },
+    {
+      "id": "8",
+      "title": "Relance email urgente",
+      "description": "Facture #FAC-2024-004 échue depuis 30 jours",
+      "dueDate": "2024-12-14",
+      "dueTime": "14:00",
+      "priority": "urgent",
+      "status": "overdue",
+      "type": "email",
+      "clientId": "6",
+      "clientName": "Société XYZ",
+      "assignedTo": "manager3",
+      "createdAt": "2024-12-13T10:00:00Z"
+    }
+  ],
+  "relanceTemplates": [
+    {
+      "id": "1",
+      "name": "Email de relance standard",
+      "type": "email",
+      "subject": "Rappel de paiement - Facture {{invoice_number}}",
+      "content": "Bonjour {{client_name}},\n\nNous vous rappelons que votre facture {{invoice_number}} d'un montant de {{amount}} est échue depuis {{days_overdue}} jours.\n\nMerci de procéder au règlement dans les plus brefs délais.\n\nCordialement,\nL'équipe de recouvrement",
+      "variables": ["client_name", "invoice_number", "amount", "days_overdue"],
+      "isActive": true,
+      "createdAt": "2024-01-15T10:00:00Z",
+      "createdBy": "admin1"
+    },
+    {
+      "id": "2",
+      "name": "SMS de relance urgente",
+      "type": "sms",
+      "content": "URGENT: Votre facture {{invoice_number}} de {{amount}}€ est impayée. Contactez-nous au 01.23.45.67.89",
+      "variables": ["invoice_number", "amount"],
+      "isActive": true,
+      "createdAt": "2024-01-20T14:30:00Z",
+      "createdBy": "admin1"
+    },
+    {
+      "id": "3",
+      "name": "Email de mise en demeure",
+      "type": "email",
+      "subject": "MISE EN DEMEURE - Facture {{invoice_number}}",
+      "content": "Madame, Monsieur,\n\nMalgré nos relances, votre facture {{invoice_number}} d'un montant de {{amount}}€ reste impayée depuis {{days_overdue}} jours.\n\nNous vous mettons en demeure de régler cette somme sous 8 jours, faute de quoi nous serons contraints d'engager une procédure judiciaire.\n\nVeuillez agréer nos salutations distinguées,\nService Juridique",
+      "variables": ["client_name", "invoice_number", "amount", "days_overdue"],
+      "isActive": true,
+      "createdAt": "2024-02-01T09:15:00Z",
+      "createdBy": "admin1"
+    },
+    {
+      "id": "4",
+      "name": "Lettre de relance",
+      "type": "letter",
+      "subject": "Relance de paiement",
+      "content": "Madame, Monsieur,\n\nNous constatons que malgré notre précédente relance, votre facture {{invoice_number}} d'un montant de {{amount}}€ datée du {{issue_date}} et échue le {{due_date}} demeure impayée à ce jour.\n\nNous vous prions de bien vouloir procéder à son règlement dans les plus brefs délais.\n\nVeuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées.\n\nLe Service Recouvrement",
+      "variables": ["client_name", "invoice_number", "amount", "issue_date", "due_date"],
+      "isActive": true,
+      "createdAt": "2024-02-15T11:00:00Z",
+      "createdBy": "admin1"
+    }
+  ],
+  "relanceRules": [
+    {
+      "id": "1",
+      "name": "Première relance automatique",
+      "triggerDays": 7,
+      "action": "email",
+      "templateId": "1",
+      "isActive": true,
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": "2",
+      "name": "Relance SMS urgente",
+      "triggerDays": 15,
+      "action": "sms",
+      "templateId": "2",
+      "isActive": true,
+      "createdAt": "2024-01-20T15:00:00Z",
+      "updatedAt": "2024-01-20T15:00:00Z"
+    },
+    {
+      "id": "3",
+      "name": "Passage en statut critique",
+      "triggerDays": 30,
+      "action": "status_change",
+      "newStatus": "critical",
+      "isActive": true,
+      "createdAt": "2024-02-01T09:30:00Z",
+      "updatedAt": "2024-02-01T09:30:00Z"
+    },
+    {
+      "id": "4",
+      "name": "Mise en demeure",
+      "triggerDays": 45,
+      "action": "email",
+      "templateId": "3",
+      "isActive": true,
+      "createdAt": "2024-02-01T10:00:00Z",
+      "updatedAt": "2024-02-01T10:00:00Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc1",
+      "client_id": "1",
+      "name": "Contrat de service",
+      "type": "contract",
+      "size_bytes": 1245678,
+      "file_path": "clients/1/contrat_service_2024.pdf",
+      "mime_type": "application/pdf",
+      "created_at": "2024-01-15T10:00:00Z",
+      "created_by": "manager1"
+    },
+    {
+      "id": "doc2",
+      "client_id": "1",
+      "communication_id": "comm1",
+      "name": "Relance email 1",
+      "type": "communication",
+      "size_bytes": 45678,
+      "file_path": "clients/1/communications/relance_email_20241214.pdf",
+      "mime_type": "application/pdf",
+      "created_at": "2024-12-14T14:00:00Z",
+      "created_by": "manager1"
+    },
+    {
+      "id": "doc3",
+      "client_id": "3",
+      "communication_id": "comm4",
+      "name": "Mise en demeure",
+      "type": "legal",
+      "size_bytes": 567890,
+      "file_path": "clients/3/legal/mise_en_demeure_20241214.pdf",
+      "mime_type": "application/pdf",
+      "created_at": "2024-12-14T11:00:00Z",
+      "created_by": "manager2"
+    }
+  ],
+  "systemLogs": [
+    {
+      "id": "log1",
+      "user_id": "admin1",
+      "action": "user_created",
+      "entity_type": "user",
+      "entity_id": "manager4",
+      "details": {
+        "email": "gestionnaire4@crm.com",
+        "role": "manager"
+      },
+      "ip_address": "192.168.1.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      "created_at": "2024-03-01T09:45:00Z"
+    },
+    {
+      "id": "log2",
+      "user_id": "manager1",
+      "action": "client_status_changed",
+      "entity_type": "client",
+      "entity_id": "1",
+      "details": {
+        "old_status": "orange",
+        "new_status": "critical",
+        "reason": "Dépassement délai 30 jours"
+      },
+      "ip_address": "192.168.1.2",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "created_at": "2024-12-15T10:00:00Z"
+    },
+    {
+      "id": "log3",
+      "user_id": "manager1",
+      "action": "payment_recorded",
+      "entity_type": "payment",
+      "entity_id": "pay1",
+      "details": {
+        "amount": 2500.00,
+        "invoice_id": "inv2",
+        "method": "Virement bancaire"
+      },
+      "ip_address": "192.168.1.2",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "created_at": "2024-12-10T10:00:00Z"
+    }
+  ],
+  "debtorFormData": {
+    "administrativeInfo": {
+      "dossierNumber": "1",
+      "status": "critical",
+      "debtorType": "company",
+      "civility": "M.",
+      "name": "Martin SARL",
+      "firstName": "Jean",
+      "birthDate": "",
+      "nationality": "Française",
+      "identificationNumber": "SIRET: 12345678901234 / TVA: FR12345678901"
+    },
+    "locationAndLegalStructure": {
+      "mainAddress": "123 Rue de la Paix, 75001 Paris",
+      "secondaryAddress": "",
+      "city": "Paris",
+      "postalCode": "75001",
+      "country": "France",
+      "legalForm": "SARL",
+      "socialCapital": "",
+      "rcs": "",
+      "naf": "",
+      "mainActivity": ""
+    },
+    "contactsAndLegalRepresentatives": {
+      "legalRepresentative": "Jean Martin",
+      "function": "Gérant",
+      "professionalPhone": "+33 1 23 45 67 89",
+      "mobilePhone": "+33 6 12 34 56 78",
+      "directEmail": "jean.martin@example.com",
+      "accountantName": "Sophie Dupont",
+      "accountingFirm": "",
+      "accountantEmail": "comptabilite@martin-sarl.fr"
+    },
+    "debtDetails": {
+      "totalAmount": "15750.50",
+      "htAmount": "",
+      "tva": "",
+      "initialInstallments": "",
+      "originalSchedule": false,
+      "invoiceDates": "2024-11-15, 2024-12-01, 2024-12-31",
+      "invoiceNumbers": "FAC-2024-001, FAC-2024-002, FAC-2024-003",
+      "lastPaymentDate": "2024-12-10",
+      "lastPaymentAmount": "2500.00",
+      "paymentMethod": "virement"
+    },
+    "legalOriginOfDebt": {
+      "contractSigned": true,
+      "serviceType": "Conseil, Maintenance, Formation",
+      "generalConditionsAccepted": false,
+      "penaltyClause": false,
+      "ongoingDispute": false,
+      "disputeNature": ""
+    },
+    "reminders": [
+      {
+        "type": "reminder1",
+        "date": "2024-12-14",
+        "mode": "email",
+        "response": "Relance facture FAC-2024-001"
+      },
+      {
+        "type": "reminder2",
+        "date": "2024-12-15",
+        "mode": "call",
+        "response": "Promesse de paiement pour le 20/12 (3000€) et mise en place d'un échéancier pour le solde."
+      },
+      {
+        "type": "formalNotice",
+        "date": "",
+        "mode": "letter",
+        "response": ""
+      },
+      {
+        "type": "lastContact",
+        "date": "2024-12-10",
+        "mode": "call",
+        "response": "Promesse de règlement au 15/12"
+      }
+    ],
+    "debtorSituationAnalysis": {
+      "paymentCapacity": "unknown",
+      "paymentIntention": "good_faith",
+      "financialDifficultySigns": true,
+      "difficultCompanyRegistry": false,
+      "bankruptcyProcedure": false,
+      "bankruptcyDate": ""
+    },
+    "actionPlan": [
+      {
+        "action": "friendlyCall",
+        "responsible": "Marie Dubois",
+        "deadline": "2024-12-16",
+        "status": "pending"
+      },
+      {
+        "action": "paymentPlanProposal",
+        "responsible": "Marie Dubois",
+        "deadline": "",
+        "status": "pending"
+      },
+      {
+        "action": "formalNotice",
+        "responsible": "",
+        "deadline": "",
+        "status": "pending"
+      },
+      {
+        "action": "legalAction",
+        "responsible": "",
+        "deadline": "",
+        "status": "pending"
+      },
+      {
+        "action": "bailiff",
+        "responsible": "",
+        "deadline": "",
+        "status": "pending"
+      }
+    ],
+    "attachedDocuments": {
+      "contract": true,
+      "invoices": true,
+      "paymentHistory": true,
+      "emailExchanges": true,
+      "formalNotice": false,
+      "debtorBankDetails": false,
+      "solvencyReport": false,
+      "certificate": false
+    },
+    "generalComments": "Client difficile à joindre. Promesse de règlement au 15/12. Échéancier à mettre en place pour le solde.",
+    "validation": {
+      "caseManager": "Marie Dubois",
+      "creationDate": "2024-01-15",
+      "department": "recovery"
+    }
+  },
+  "metrics": {
+    "totalDebt": 54650.50,
+    "activeFiles": 6,
+    "recoveryRate": 78.5,
+    "averageDso": 45,
+    "monthlyRecovered": 200000,
+    "criticalFiles": 2
+  },
+  "financialData": {
+    "totalAmount": 23950.50,
+    "recoveredAmount": 12500.75,
+    "pendingAmount": 11449.75,
+    "recoveryRate": 52.2,
+    "monthlyTrend": 8.5,
+    "byClient": [
+      { "id": "1", "name": "Jean Martin", "amount": 8750.50, "recovered": 2500.00, "rate": 28.6 },
+      { "id": "2", "name": "Sophie Leroy", "amount": 4500.00, "recovered": 4500.00, "rate": 100 },
+      { "id": "3", "name": "Pierre Dubois", "amount": 7200.00, "recovered": 3500.75, "rate": 48.6 },
+      { "id": "4", "name": "Martin SA", "amount": 3500.00, "recovered": 2000.00, "rate": 57.1 }
+    ],
+    "byMonth": [
+      { "month": "Jan", "amount": 15000, "recovered": 12000 },
+      { "month": "Fév", "amount": 18000, "recovered": 14500 },
+      { "month": "Mar", "amount": 22000, "recovered": 16000 },
+      { "month": "Avr", "amount": 19000, "recovered": 15000 },
+      { "month": "Mai", "amount": 21000, "recovered": 17500 },
+      { "month": "Juin", "amount": 24000, "recovered": 19000 }
+    ],
+    "recentPayments": [
+      { "id": "p1", "date": "2024-12-15", "client": "Sophie Leroy", "amount": 4500.00, "method": "Virement bancaire", "status": "completed" },
+      { "id": "p2", "date": "2024-12-12", "client": "Pierre Dubois", "amount": 2000.75, "method": "Carte bancaire", "status": "completed" },
+      { "id": "p3", "date": "2024-12-10", "client": "Jean Martin", "amount": 2500.00, "method": "Virement bancaire", "status": "completed" },
+      { "id": "p4", "date": "2024-12-05", "client": "Martin SA", "amount": 2000.00, "method": "Chèque", "status": "completed" }
+    ],
+    "upcomingPayments": [
+      { "id": "up1", "dueDate": "2024-12-20", "client": "Jean Martin", "amount": 3000.00, "status": "scheduled" },
+      { "id": "up2", "dueDate": "2024-12-25", "client": "Pierre Dubois", "amount": 1500.00, "status": "scheduled" },
+      { "id": "up3", "dueDate": "2024-12-31", "client": "Martin SA", "amount": 1500.00, "status": "scheduled" }
+    ]
+  },
+  "criticalDossiers": [
+    {
+      "id": "1",
+      "clientName": "Jean Martin",
+      "email": "jean.martin@example.com",
+      "phone": "+33 1 23 45 67 89",
+      "amount": 15750.50,
+      "daysOverdue": 45,
+      "status": "critical",
+      "priority": "urgent",
+      "lastContact": "2024-12-10T14:30:00Z",
+      "riskLevel": "high",
+      "managerId": "manager1",
+      "managerName": "Marie Dubois",
+      "notes": ["Client difficile à joindre", "Promesse de règlement au 15/12"],
+      "invoices": [
+        {
+          "id": "inv1",
+          "number": "FAC-2024-001",
+          "amount": 8750.50,
+          "dueDate": "2024-11-15",
+          "daysOverdue": 30
+        },
+        {
+          "id": "inv2",
+          "number": "FAC-2024-002",
+          "amount": 4500.00,
+          "dueDate": "2024-12-01",
+          "daysOverdue": 14
+        }
+      ],
+      "nextAction": {
+        "type": "Appel",
+        "date": "2024-12-16T09:00:00Z",
+        "description": "Relance urgente pour règlement"
+      }
+    },
+    {
+      "id": "3",
+      "clientName": "Pierre Dubois",
+      "email": "pierre.dubois@gmail.com",
+      "phone": "+33 6 12 34 56 78",
+      "amount": 12300.00,
+      "daysOverdue": 60,
+      "status": "critical",
+      "priority": "urgent",
+      "lastContact": "2024-12-12T09:30:00Z",
+      "riskLevel": "extreme",
+      "managerId": "manager2",
+      "managerName": "Pierre Martin",
+      "notes": ["Dossier transmis au service juridique", "Contestation de facture"],
+      "invoices": [
+        {
+          "id": "inv6",
+          "number": "FAC-2024-006",
+          "amount": 12300.00,
+          "dueDate": "2024-11-30",
+          "daysOverdue": 60
+        }
+      ],
+      "nextAction": {
+        "type": "Juridique",
+        "date": "2024-12-18T16:00:00Z",
+        "description": "Préparation dossier contentieux"
+      }
+    },
+    {
+      "id": "6",
+      "clientName": "Société XYZ",
+      "email": "contact@societe-xyz.fr",
+      "phone": "+33 1 34 56 78 90",
+      "amount": 9800.00,
+      "daysOverdue": 30,
+      "status": "orange",
+      "priority": "high",
+      "lastContact": "2024-12-12T15:30:00Z",
+      "riskLevel": "high",
+      "managerId": "manager3",
+      "managerName": "Sophie Leroy",
+      "notes": ["Difficultés financières connues", "Plan de redressement en cours"],
+      "invoices": [
+        {
+          "id": "inv9",
+          "number": "FAC-2024-009",
+          "amount": 9800.00,
+          "dueDate": "2024-11-15",
+          "daysOverdue": 30
+        }
+      ],
+      "nextAction": {
+        "type": "Email",
+        "date": "2024-12-16T10:30:00Z",
+        "description": "Relance avec proposition d'échéancier"
+      }
+    }
+  ]
+}
