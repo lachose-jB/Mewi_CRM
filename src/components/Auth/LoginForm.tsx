@@ -26,8 +26,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBack }) => {
   const demoAccounts = [
     { role: 'Administrateur', email: 'admin@crm.com', password: '123456' },
     { role: 'Gestionnaire', email: 'gestionnaire@crm.com', password: '123456' },
-    { role: 'Client', email: 'client@example.com', password: '123456' }, // Utilisateur qui confie ses débiteurs
-    { role: 'Débiteur', email: 'debiteur@example.com', password: '123456' } // Débiteur
+    { role: 'Client', email: 'client@example.com', password: '123456' },
+    { role: 'Débiteur', email: 'debiteur@example.com', password: '123456' }
   ];
 
   return (
@@ -128,28 +128,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBack }) => {
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300" />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-500">Comptes de démonstration</span>
-            </div>
-          </div>
-          
-          <div className="mt-4 space-y-2">
-            {demoAccounts.map((account, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => {
-                  setEmail(account.email);
-                  setPassword(account.password);
-                }}
-                className="w-full text-left px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-900">{account.role}</span>
-                  <span className="text-xs text-gray-500">{account.email}</span>
-                </div>
-              </button>
-            ))}
           </div>
         </div>
       </div>
