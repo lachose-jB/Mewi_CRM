@@ -1,6 +1,9 @@
-// Database Connection Manager pour MariaDB/MySQL sur WampServer
-const mysql = require('mysql2/promise');
-const dbConfig = require('./config');
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+import dbConfig from './config.js';
+
+// Charger les variables d'environnement
+dotenv.config();
 
 // Détermine l'environnement
 const env = process.env.NODE_ENV || 'development';
@@ -19,19 +22,22 @@ const pool = mysql.createPool({
 });
 
 // Test de connexion
-(async () => {
+const testConnection = async () => {
   try {
     const connection = await pool.getConnection();
     const [rows] = await connection.query('SELECT NOW() AS now');
     console.log('Database connected successfully at:', rows[0].now);
     connection.release();
+    return true;
   } catch (err) {
     console.error('Database connection error:', err);
+    return false;
   }
-})();
+};
 
 // Export du pool et d'une méthode query
-module.exports = {
+export default {
   query: (sql, params) => pool.execute(sql, params),
-  getConnection: () => pool.getConnection()
+  getConnection: () => pool.getConnection(),
+  testConnection
 };
