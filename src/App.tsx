@@ -8,6 +8,7 @@ import Sidebar from './components/Layout/Sidebar';
 import AdminDashboard from './components/Dashboard/AdminDashboard';
 import ManagerDashboard from './components/Dashboard/ManagerDashboard';
 import DebiteurDashboard from './components/Dashboard/DebiteurDashboard';
+import MonDossierDetaille from './components/Debiteur/MonDossierDetaille';
 import UserManagement from './components/Management/UserManagement';
 import DebiteurPortfolio from './components/Management/DebiteurPortfolio.tsx';
 import SystemConfiguration from './components/Management/SystemConfiguration';
@@ -78,7 +79,7 @@ const AppContent: React.FC = () => {
     if (user.role === 'debiteur') {
       switch (activeTab) {
         case 'dashboard': return <DebiteurDashboard />;
-        case 'dossier': return <DossierDetails />;
+        case 'dossier': return <MonDossierDetaille />;
         case 'invoices': return <InvoicesPage />;
         case 'payments': return <PaymentsPage />;
         case 'history': return <HistoryPage />;
