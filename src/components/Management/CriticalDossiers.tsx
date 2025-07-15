@@ -26,7 +26,9 @@ import {
   Plus, 
   Zap, 
   TrendingUp, 
-  TrendingDown 
+  TrendingDown,
+  ArrowUp,
+  ArrowDown 
 } from 'lucide-react';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -484,30 +486,18 @@ const CriticalDossiers: React.FC = () => {
                             <div className="p-3 bg-white border border-gray-200 rounded-lg">
                               <p className="text-sm text-gray-500">Aucune note disponible</p>
                             </div>
-                              Note
+                          )}
                           
-                            <button 
-                              onClick={() => {
-                                setSelectedDebtorId(dossier.id);
-                                setShowDebtorDetail(true);
-                              }}
-                              className="flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-                            >
-                            <p className="text-sm text-gray-600">
-                              Détails
-                            </p>
+                          <div className="mt-4 flex space-x-2">
+                            <button className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                              <Plus className="h-4 w-4 mr-1" />
+                              Ajouter une note
+                            </button>
+                            <button className="flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                              <Zap className="h-4 w-4 mr-1" />
+                              Plan d'action
+                            </button>
                           </div>
-                        </div>
-                        
-                        <div className="mt-4 flex space-x-2">
-                          <button className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
-                            <Plus className="h-4 w-4 mr-1" />
-                            Ajouter une note
-                          </button>
-                          <button className="flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
-                            <Zap className="h-4 w-4 mr-1" />
-                            Plan d'action
-                          </button>
                         </div>
                       </div>
                     </div>
