@@ -341,18 +341,17 @@ const DebiteurPortfolio: React.FC = () => {
                           setSelectedDebtorId(debiteur.id);
                           setShowDebtorDetail(true);
                         }}
-                        className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+                        className="flex flex-col items-start text-blue-600 hover:text-blue-800 font-medium"
                       >
                         <p className="text-lg font-bold text-gray-900">{formatCurrency(debiteur.total_amount)}</p>
                         <p className="text-sm text-gray-500">
                           Dernier contact: {new Date(debiteur.last_contact || Date.now()).toLocaleDateString('fr-FR')}
                         </p>
-                      </div>
-                      
+                      </button>
+
                       <div className="flex items-center space-x-2">
                         <button 
                           onClick={(e) => {
-                            e.stopPropagation();
                             e.stopPropagation();
                             handleEditDebtor(debiteur);
                           }}
@@ -381,6 +380,7 @@ const DebiteurPortfolio: React.FC = () => {
                         </button>
                       </div>
                     </div>
+
                   </div>
                   
                   {/* Détails étendus */}

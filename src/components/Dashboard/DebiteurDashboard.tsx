@@ -26,8 +26,11 @@ const DebiteurDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [debiteurDetails, setDebiteurDetails] = useState<any>(null);
 
-  // Trouver le debiteur correspondant à l'utilisateur connecté
-  const debiteurData = clients.find(client => client.user_id === user?.id || client.email === user?.email);
+  // Attendre que les données soient chargées avant de chercher le débiteur
+  const isDataReady = clients && clients.length > 0 && user;
+  const debiteurData = isDataReady
+    ? clients.find(client => client.user_id === user?.id || client.email === user?.email)
+    : null;
 
   // Load debiteur details
   useEffect(() => {
@@ -54,7 +57,7 @@ const DebiteurDashboard: React.FC = () => {
       }
     };
     
-    loadDebiteurDetails();
+    if (debiteurData) loadDebiteurDetails();
   }, [debiteurData, invoices, communications]);
 
   // Handle refresh
@@ -81,22 +84,24 @@ const DebiteurDashboard: React.FC = () => {
     setIsLoading(false);
   };
 
-  if (!debiteurData) {
-    return (
-      <div className="p-6">
-        <div className="text-center">
-          <p className="text-gray-500">Aucune information Débiteur trouvée</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading && !debiteurDetails) {
+  // Afficher un loader si les données ne sont pas prêtes
+  if (!isDataReady) {
     return (
       <div className="p-6">
         <div className="text-center">
           <RefreshCw className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
           <p className="mt-4 text-gray-600">Chargement des données...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Afficher le message d'absence seulement si tout est chargé et qu'aucun débiteur n'est trouvé
+  if (isDataReady && !debiteurData) {
+    return (
+      <div className="p-6">
+        <div className="text-center">
+          <p className="text-gray-500">Aucune information débiteur trouvée</p>
         </div>
       </div>
     );
