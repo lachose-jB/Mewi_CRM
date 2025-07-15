@@ -38,6 +38,8 @@ import {
 } from 'lucide-react';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
+import DebtorForm from './DebtorForm';
+import DebtorDetailView from './DebtorDetailView';
 
 interface ClientDossier {
   id: string;
@@ -471,6 +473,8 @@ const ClientDossiers: React.FC<ClientDossiersProps> = ({ onSelectDossier }) => {
   const [selectedDossier, setSelectedDossier] = useState<ClientDossier | null>(null);
   const [showDossierModal, setShowDossierModal] = useState(false);
   const [selectedDossiers, setSelectedDossiers] = useState<string[]>([]);
+  const [showDebtorDetail, setShowDebtorDetail] = useState(false);
+  const [selectedDebtorId, setSelectedDebtorId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
 
   // Mock data pour les dossiers clients
@@ -599,6 +603,9 @@ const ClientDossiers: React.FC<ClientDossiersProps> = ({ onSelectDossier }) => {
   const handleRowClick = (dossier: ClientDossier) => {
     if (onSelectDossier) {
       onSelectDossier(dossier);
+    } else if (dossier.id) {
+      setSelectedDebtorId(dossier.id);
+      setShowDebtorDetail(true);
     } else {
       handleEditDossier(dossier);
     }
@@ -638,6 +645,16 @@ const ClientDossiers: React.FC<ClientDossiersProps> = ({ onSelectDossier }) => {
   const totalAmount = filteredDossiers.reduce((sum, dossier) => sum + dossier.totalAmount, 0);
   const criticalCount = filteredDossiers.filter(dossier => dossier.status === 'critical').length;
   const urgentCount = filteredDossiers.filter(dossier => dossier.priority === 'urgent').length;
+
+  // Si on affiche les détails d'un débiteur
+  if (showDebtorDetail && selectedDebtorId) {
+    return (
+      <DebtorDetailView 
+        debtorId={selectedDebtorId} 
+        onBack={() => setShowDebtorDetail(false)} 
+      />
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -934,7 +951,14 @@ const ClientDossiers: React.FC<ClientDossiersProps> = ({ onSelectDossier }) => {
                         <Edit3 className="h-4 w-4" />
                       </button>
                       <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                        <MoreVertical className="h-4 w-4" />
+                        <Eye 
+                          className="h-4 w-4" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDebtorId(dossier.id);
+                            setShowDebtorDetail(true);
+                          }}
+                        />
                       </button>
                     </div>
                   </div>

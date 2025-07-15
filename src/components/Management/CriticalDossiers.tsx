@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
+import DebtorDetailView from './DebtorDetailView';
 
 interface CriticalDossier {
   id: string;
@@ -69,6 +70,8 @@ const CriticalDossiers: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [criticalDossiers, setCriticalDossiers] = useState<CriticalDossier[]>([]);
   const [selectedDossier, setSelectedDossier] = useState<string | null>(null);
+  const [showDebtorDetail, setShowDebtorDetail] = useState(false);
+  const [selectedDebtorId, setSelectedDebtorId] = useState<string | null>(null);
 
   // Load critical dossiers
   useEffect(() => {
@@ -149,6 +152,16 @@ const CriticalDossiers: React.FC = () => {
     await refreshData();
     setIsLoading(false);
   };
+
+  // Si on affiche les détails d'un débiteur
+  if (showDebtorDetail && selectedDebtorId) {
+    return (
+      <DebtorDetailView 
+        debtorId={selectedDebtorId} 
+        onBack={() => setShowDebtorDetail(false)} 
+      />
+    );
+  }
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -413,7 +426,13 @@ const CriticalDossiers: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                      <button 
+                        onClick={() => {
+                          setSelectedDebtorId(dossier.id);
+                          setShowDebtorDetail(true);
+                        }}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
                         <Phone className="h-4 w-4" />
                       </button>
                       <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
@@ -465,11 +484,17 @@ const CriticalDossiers: React.FC = () => {
                             <div className="p-3 bg-white border border-gray-200 rounded-lg">
                               <p className="text-sm text-gray-500">Aucune note disponible</p>
                             </div>
-                          )}
+                              Note
                           
-                          <div className="p-3 bg-white border border-gray-200 rounded-lg">
+                            <button 
+                              onClick={() => {
+                                setSelectedDebtorId(dossier.id);
+                                setShowDebtorDetail(true);
+                              }}
+                              className="flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                            >
                             <p className="text-sm text-gray-600">
-                              <span className="font-medium">Dernier contact:</span> {new Date(dossier.lastContact).toLocaleDateString('fr-FR')}
+                              Détails
                             </p>
                           </div>
                         </div>

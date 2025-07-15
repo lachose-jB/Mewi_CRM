@@ -27,6 +27,7 @@ import {
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
 import DebtorForm from './DebtorForm';
+import DebtorDetailView from './DebtorDetailView';
 
 const DebiteurPortfolio: React.FC = () => {
   const { clients, invoices, refreshData } = useCrm();
@@ -38,6 +39,8 @@ const DebiteurPortfolio: React.FC = () => {
   const [debiteurDetails, setDebiteurDetails] = useState<Record<string, any>>({});
   const [showDebtorForm, setShowDebtorForm] = useState(false);
   const [editingDebtor, setEditingDebtor] = useState<any>(null);
+  const [showDebtorDetail, setShowDebtorDetail] = useState(false);
+  const [selectedDebtorId, setSelectedDebtorId] = useState<string | null>(null);
 
   // Filtrer les débiteurs selon le rôle
   const myDebiteurs = user?.role === 'manager' 
@@ -147,6 +150,16 @@ const DebiteurPortfolio: React.FC = () => {
     // For now, we'll just close the form
     setShowDebtorForm(false);
   };
+
+  // Si on affiche les détails d'un débiteur
+  if (showDebtorDetail && selectedDebtorId) {
+    return (
+      <DebtorDetailView 
+        debtorId={selectedDebtorId} 
+        onBack={() => setShowDebtorDetail(false)} 
+      />
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -322,7 +335,14 @@ const DebiteurPortfolio: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center space-x-6">
-                      <div className="text-right">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedDebtorId(debiteur.id);
+                          setShowDebtorDetail(true);
+                        }}
+                        className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+                      >
                         <p className="text-lg font-bold text-gray-900">{formatCurrency(debiteur.total_amount)}</p>
                         <p className="text-sm text-gray-500">
                           Dernier contact: {new Date(debiteur.last_contact || Date.now()).toLocaleDateString('fr-FR')}
@@ -333,13 +353,21 @@ const DebiteurPortfolio: React.FC = () => {
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
+                            e.stopPropagation();
                             handleEditDebtor(debiteur);
                           }}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         >
                           <Edit3 className="h-4 w-4" />
                         </button>
-                        <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDebtorId(debiteur.id);
+                            setShowDebtorDetail(true);
+                          }}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        >
                           <Phone className="h-4 w-4" />
                         </button>
                         <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
@@ -376,7 +404,14 @@ const DebiteurPortfolio: React.FC = () => {
                           <div>
                             <h5 className="text-sm font-medium text-gray-900 mb-3">Actions Rapides</h5>
                             <div className="flex flex-wrap gap-2">
-                              <button className="flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedDebtorId(debiteur.id);
+                                  setShowDebtorDetail(true);
+                                }}
+                                className="flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                              >
                                 <Eye className="h-3 w-3 mr-1" />
                                 Voir Dossier
                               </button>
