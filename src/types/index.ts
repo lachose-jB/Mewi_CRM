@@ -12,6 +12,28 @@ export interface Client {
   name: string;
   email: string;
   phone: string;
+  company: string;
+  address: string;
+  contactPerson: string;
+  contactRole: string;
+  assignedManagerId: string;
+  assignedManagerName: string;
+  createdAt: string;
+  updatedAt: string;
+  status: 'active' | 'inactive' | 'suspended';
+  contractStart: string;
+  contractEnd?: string;
+  notes: string[];
+  totalDebtAmount: number;
+  totalCollectedAmount: number;
+  recoveryRate: number;
+}
+
+export interface Client {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
   address: string;
   managerId: string;
   status: 'blue' | 'yellow' | 'orange' | 'critical';

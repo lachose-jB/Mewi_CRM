@@ -121,6 +121,15 @@ export const getStatusConfig = (status: string) => {
   }
 };
 
+export const getClientStatusConfig = (status: string) => {
+  switch (status) {
+    case 'active': return { label: 'Actif', color: 'bg-green-100 text-green-800', icon: CheckCircle };
+    case 'inactive': return { label: 'Inactif', color: 'bg-gray-100 text-gray-800', icon: X };
+    case 'suspended': return { label: 'Suspendu', color: 'bg-red-100 text-red-800', icon: AlertCircle };
+    default: return { label: status, color: 'bg-gray-100 text-gray-800', icon: CheckCircle };
+  }
+};
+
 export const getPriorityConfig = (priority: string) => {
   switch (priority) {
     case 'low': return { label: 'Basse', color: 'bg-green-100 text-green-800' };

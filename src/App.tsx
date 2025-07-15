@@ -10,6 +10,7 @@ import ManagerDashboard from './components/Dashboard/ManagerDashboard';
 import DebiteurDashboard from './components/Dashboard/DebiteurDashboard';
 import MonDossierDetaille from './components/Debiteur/MonDossierDetaille';
 import UserManagement from './components/Management/UserManagement';
+import ClientManagement from './components/Management/ClientManagement';
 import DebiteurPortfolio from './components/Management/DebiteurPortfolio.tsx';
 import SystemConfiguration from './components/Management/SystemConfiguration';
 import ReportsAnalytics from './components/Management/ReportsAnalytics';
@@ -55,6 +56,7 @@ const AppContent: React.FC = () => {
         case 'dashboard': return <AdminDashboard />;
         case 'users': return <UserManagement />;
         case 'debiteurs': return <DebiteurPortfolio />;
+        case 'clients': return <ClientManagement />;
         case 'config': return <SystemConfiguration />;
         case 'reports': return <ReportsAnalytics />;
         case 'monitoring': return <SystemMonitoring />;
