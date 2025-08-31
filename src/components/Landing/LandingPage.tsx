@@ -20,10 +20,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
 
   const menuItems = [
     { id: 'accueil', label: 'Accueil' },
-    { id: 'crm', label: 'CRM Recouvrement' },
-    { id: 'pour-qui', label: 'Pour qui ?' },
-    { id: 'a-propos', label: 'À propos de nous' },
-    { id: 'contact', label: 'Contact' }
+    { id: 'crm', label: 'A propos' },
+    { id: 'pour-qui', label: 'Nos Service' },
+    { id: 'contact', label: 'Contact' },
+    { id: 'a-propos', label: 'Mentions Légales' }
   ];
 
   const navigateToPage = (pageId: string) => {
