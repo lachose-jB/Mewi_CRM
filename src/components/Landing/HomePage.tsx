@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'; // 🔥 Import Framer M
 
 interface HomePageProps {
   onNavigate: (page: string) => void;
-  onLogin?: () => void; // Ajout onLogin optionnel
+  onLogin?: () => void; 
 }
 
 export default function HomePage({ onNavigate, onLogin }: HomePageProps) {
@@ -330,7 +330,7 @@ export default function HomePage({ onNavigate, onLogin }: HomePageProps) {
               </ul>
 
               <button 
-                onClick={() => onNavigate('services')}
+                onClick={() => onNavigate('pour-qui')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center space-x-2"
               >
                 <span>Découvrir nos services</span>
